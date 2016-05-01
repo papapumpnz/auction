@@ -1,0 +1,16 @@
+@import "theme/variables";
+@import "theme/mixins";
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "../../bower_components/font-awesome/scss/variables";
+@import "../../bower_components/select2-bootstrap-css/lib/select2-bootstrap";
+
+//everything below this line is required for essential styling
+
+@import "theme/general";
+@import "theme/global-transitions";
+@import "theme/base";
+
+@import "theme/widgets";
+@import "theme/utils";
+@import "theme/print";

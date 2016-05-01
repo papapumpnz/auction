@@ -1,0 +1,28 @@
+{
+  "api_version" : "v1",
+  "description" : "API specifications for auction site authentication and registration API",
+  "url_base" : "/api/v1/",
+  "spec" : [
+     { "route" : "auth",
+       "description" : "Authenticates account request and returns an access token",
+       "method" : "POST",
+       "headers" : 
+       {
+       },
+       "body" : 
+       {
+         "email" : "users account login",
+         "password" : "users account password"
+       },
+       "returns" : {
+         "content_type" : "application/json",
+         "body" :
+         {
+           "status" : "HTTP status code",
+           "token" : "An access token if authenticated",
+           "message" : "If an error occured, or request was not authenticated"
+         }
+       }
+     }
+  ]
+}

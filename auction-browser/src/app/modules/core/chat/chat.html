@@ -1,0 +1,49 @@
+<aside class="chat-sidebar">
+  <div class="chat-sidebar-content">
+    <header class="chat-sidebar-header">
+      <h4 class="chat-sidebar-title">Contacts</h4>
+      <div class="form-group no-margin">
+        <div class="input-group input-group-dark">
+          <input class="form-control fs-mini" ng-model="q" type="text" placeholder="Search...">
+          <span class="input-group-addon">
+            <i class="fa fa-search"></i>
+          </span>
+        </div>
+      </div>
+    </header>
+    <div class="chat-sidebar-contacts chat-sidebar-panel open">
+      <h5 class="sidebar-nav-title">Today</h5>
+      <div class="list-group chat-sidebar-user-group">
+        <a ng-repeat="conversation in todayConversations | filter: q"
+           ng-click="openConversation(conversation); deactivateLink($event)"
+           class="list-group-item">
+          <i class="fa fa-circle text-{{conversation.status}} pull-right"></i>
+          <span class="thumb-sm pull-left mr">
+              <img class="img-circle" ng-src="{{conversation.image}}" alt="...">
+          </span>
+          <h5 class="message-sender">{{conversation.name}}</h5>
+          <p class="message-preview">{{conversation.lastMessage}}</p>
+        </a>
+      </div>
+
+      <h5 class="sidebar-nav-title">Last Week</h5>
+      <div class="list-group chat-sidebar-user-group">
+        <a ng-repeat="conversation in lastWeekConversations | filter: q"
+           ng-click="openConversation(conversation); deactivateLink($event)"
+           class="list-group-item">
+          <i class="fa fa-circle text-{{conversation.status}} pull-right"></i>
+          <span class="thumb-sm pull-left mr">
+              <img class="img-circle" ng-src="{{conversation.image}}" alt="...">
+          </span>
+          <h5 class="message-sender">{{conversation.name}}</h5>
+          <p class="message-preview">{{conversation.lastMessage}}</p>
+        </a>
+      </div>
+    </div>
+    <div sn-chat-area="activeConversation" open="chatAreaOpened" filter="q"></div>
+    <footer class="chat-sidebar-footer form-group">
+      <input class="form-control input-dark fs-mini" ng-model="newMessage" ng-keypress="$event.which === 13 && addMessage()"
+             type="text" placeholder="Type your message">
+    </footer>
+  </div>
+</aside>

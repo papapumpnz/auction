@@ -1,0 +1,16 @@
+<div class="chat-sidebar-chat chat-sidebar-panel">
+  <h5 class="title">
+    <a ng-click="open = false">
+      <i class="fa fa-angle-left mr-xs"></i>
+      {{conversation.name}}
+    </a>
+  </h5>
+  <ul class="message-list">
+    <li ng-repeat="message in conversation.messages | filter: filter" class="message" ng-class="{'from-me': message.fromMe}">
+      <span class="thumb-sm">
+          <img class="img-circle" ng-src="{{message.fromMe ? 'assets/images/avatar.png' :conversation.image}}" alt="...">
+      </span>
+      <div class="message-body" ng-bind="message.text"></div>
+    </li>
+  </ul>
+</div>
