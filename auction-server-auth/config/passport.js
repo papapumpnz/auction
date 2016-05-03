@@ -24,7 +24,7 @@ passport.deserializeUser(function(id, done) {
 
 
 /**
- * Validate token
+ * Validate refresh token
     https://www.npmjs.com/package/passport-jwt
  */
 
@@ -38,7 +38,11 @@ passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
             return done(err, false);
         }
         if (user) {
-            done(null, user);
+            if (user.accountActive && user.refreshToken) {
+              done(null, user);
+            } else {
+              done(null, false, { status: 423, message: 'Locked'});
+            }
         } else {
             done(null, false, { status: 403, message: 'Unauthorized'});
             // or you could create a new account 

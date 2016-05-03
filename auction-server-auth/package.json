@@ -25,6 +25,7 @@
     "express-flash": "^0.0.2",
     "express-brute" : "0.5.x",
     "express-brute-mongo" : "0.1.x",
+    "express-ipfilter" : "0.0.x",
     "express-session": "^1.13.0",
     "express-validator": "^2.19.1",
     "fbgraph": "^1.1.0",
@@ -63,6 +64,7 @@
     "tumblr.js": "^0.0.7",
     "twilio": "^3.3.0-edge",
     "twit": "^2.2.2",
+    "underscore" : "1.x.x",
     "validator": "^5.0.0",
     "yui": "^3.18.1"
   },

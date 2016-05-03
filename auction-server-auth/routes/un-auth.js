@@ -7,21 +7,24 @@ var moment = require('moment')
 
 /**
    Encode JWT token
+   user is user object
+   type is refresh or token
 **/
-tokenEncode = function (user,cb) {
+tokenEncode = function (user,params,cb) {
     currDate=new Date();
     expDate=new Date();
-    expDate.setMinutes(currDate.getMinutes()+parseInt(process.env.TOKEN_EXPIRES_MINS));
+    expDate.setMinutes(currDate.getMinutes()+parseInt(params.expires));
     var payload = {
-      "iss": process.env.TOKEN_ISSUER,
-      "aud": process.env.TOKEN_AUDIENCE,
+      "iss": params.issuer,
+      "aud": params.audience,
       "exp": moment(expDate).unix(),
       "iat": moment(currDate).unix(),
-      "sub": user.id
+      "sub": user.id,
+      "type": params.type
     };
     
     //console.log(payload); 
-    var secret = process.env.TOKEN_SECRET;
+    var secret = params.secret;
 
     jwt.encode(secret, payload, function (err, token) {
       if (err) {
@@ -32,7 +35,13 @@ tokenEncode = function (user,cb) {
     });
 };
 
-exports.auth = function(req, res,next) {
+/**
+  Login
+  ------
+  Accepts email and password
+  Returns a refresh token which is long lived
+**/
+exports.login = function(req, res,next) {
 
   req.assert('email').isEmail();
   req.assert('password').notEmpty();
@@ -57,14 +66,59 @@ exports.auth = function(req, res,next) {
         "message": "Unauthorized"
       });
     }
+    
+    if (!user.accountActive) {
+      res.status(423);
+      return res.json({
+        "status": 423,
+        "message": "Locked"
+      });
+    }
+    
+    var params={};
+    params.expires=process.env.REFRESH_TOKEN_EXPIRES_MINS;
+    params.issuer=process.env.REFRESH_TOKEN_ISSUER;
+    params.audience=process.env.REFRESH_TOKEN_AUDIENCE;
+    params.secret=process.env.REFRESH_TOKEN_SECRET;
+    params.type='refresh';
+      
+    tokenEncode(user, params, function (err,token) {
+      if (err) {
+         return next(err);
+      }
+      user.refreshToken=token;
+      user.save(function(err) {
+        if(err) {
+          return next(err);
+        }
+        res.json({"status" : 200, "token":token});
+      });
+    });
+
+  })(req, res, next);
+};
+
+/**
+  Token
+  --------
+  Accepts refresh token
+  Returns a refresh token which is long lived
+**/
+exports.token = function(req, res,next) {
+   
+    var params={};
+    params.expires=process.env.TOKEN_EXPIRES_MINS;
+    params.issuer=process.env.TOKEN_ISSUER;
+    params.audience=process.env.TOKEN_AUDIENCE;
+    params.secret=process.env.TOKEN_SECRET;
+    params.type='token';
+
     tokenEncode(user, function (err,token) {
       if (err) {
          return next(err);
       }
       res.json({"status" : 200, "token":token});
     });
-
-  })(req, res, next);
 };
 
 /**

@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var express = require('express');
 var compress = require('compression');
 var bodyParser = require('body-parser');
@@ -15,6 +16,7 @@ var sass = require('node-sass-middleware');
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
+var ipfilter = require('express-ipfilter')
 
 
 /**
@@ -34,7 +36,7 @@ var store = new MongoStore(function (ready) {
  * Default path: .env (You can remove the path argument entirely, after renaming `.env.example` to `.env`)
  */
 dotenv.load({ path: './config/.env.example' });
-
+privateAPIWhiteList=_.toArray(process.env.PRIVATE_API_WHITELIST.slice());
 /**
  * API keys and Passport configuration.
  */
@@ -89,7 +91,7 @@ app.use(methodOverride());
 app.use(passport.initialize());
  
  
-app.all('/*', bruteforce.prevent, function(req, res, next) {
+app.all('/*', function(req, res, next) {
   // CORS headers
   res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -108,16 +110,35 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
      Routes
 **/
 
-// un-auth routes
-app.get('/', unAuthRoute.index);
-app.get('/health', unAuthRoute.health);
-app.post('/api/v1/auth', unAuthRoute.auth);
-app.post('/api/v1/register', unAuthRoute.register);
+/**
+  un-auth routes - PUBLIC routes
+  Have rate limiter enabled
+**/
+app.get('/', bruteforce.prevent, unAuthRoute.index);
+app.get('/health', bruteforce.prevent, unAuthRoute.health);
+app.post('/api/v1/login', bruteforce.prevent, unAuthRoute.login);
+app.post('/api/v1/register', bruteforce.prevent, unAuthRoute.register);
 
-// auth routes
-app.post('/api/v1/validate_token', passport.authenticate('jwt', { session: false, failWithError: true}), authRoute.validate);
+/**
+  un-auth routes - PUBLIC routes
+  Have rate limiter enabled
+  Require token
+**/
+app.post('/api/v1/token', bruteforce.prevent, passport.authenticate('jwt', { session: false, failWithError: true}), unAuthRoute.token);
 
-// If no route is matched by now, it must be a 404
+/**
+  auth routes  - PRIVATE routes
+  Have whitelist filter enabled
+  Require token
+**/
+console.log(privateAPIWhiteList);
+app.use(ipfilter(privateAPIWhiteList, {mode:'allow'}));
+app.post('/api/v1/validate_token',passport.authenticate('jwt', { session: false, failWithError: true}), authRoute.validate);
+
+
+/**
+  Fall through routes for 404's and 500's
+**/
 app.use(function(req, res) {
   res.status(404);
   res.json({

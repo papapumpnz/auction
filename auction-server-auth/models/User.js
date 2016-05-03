@@ -15,6 +15,9 @@ var userSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   isAdmin: Boolean,
+  
+  refreshToken: String,
+  accountActive: {type: Boolean, default: true},
 
   facebook: String,
   twitter: String,
