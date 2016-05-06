@@ -1,7 +1,8 @@
 {
   "parameters" : [
     {"name" : "a test param",
-     "value" : "a test value"
+     "value" : "a test value",
+     "consumer" : "all, or an app name"
     }
   ]
 }

@@ -22,7 +22,17 @@
            "token" : "An access token if authenticated",
            "message" : "If an error occured, or request was not authenticated"
          }
-       }
+       },
+       "images" : [
+         {"title" : "Token",
+           "description" : "This image shows the token model for login which returns a long lived refresh token. Refresh token is then used to obtain a short lived auth token to access proteced resources.",
+           "url" : "images/api_proteced_resouce.gif"
+         },
+         {"title" : "Authentication",
+           "description" : "Token exchange is described in this image.",
+           "url" : "images/api_token_uml.gif"
+         }
+       ]
      }
   ]
 }

@@ -62,6 +62,17 @@ block content
 												td
 													each val, key in route.returns.body
 														p=key + ' : ' + val
+										if route.images
+											tr.active
+												th Images
+												th
+												each image in route.images
+													tr
+														td #{image.title}
+														td
+															img.img-responsive(src="#{image.url}")
+															p.small #{image.description}
+
 
 
 script.

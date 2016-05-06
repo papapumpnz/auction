@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 
 var configSchema = new mongoose.Schema({
   name: { type: String, lowercase: true, unique: true },
-  value : String
+  value : String,
+  consumer: String
 
 }, { timestamps: true});
 

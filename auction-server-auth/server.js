@@ -18,7 +18,7 @@ var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
 var ipfilter = require('express-ipfilter');
 var config = require('config');
-
+var jwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
 
 /**
  Check we have database configuration details
@@ -153,8 +153,8 @@ mongoose.connection.on('connected', function () {
           Have whitelist filter enabled
           Require token
         **/
-        app.use(ipfilter(privateAPIWhiteList, {mode:'allow'}));
-        app.post('/api/v1/validate_token', authRoute.validate);
+        //app.use(ipfilter(privateAPIWhiteList, {mode:'allow'}));
+        app.post('/api/v1/validate_token', ipfilter(privateAPIWhiteList, {mode:'allow'}), authRoute.validate);
 
 
         /**

@@ -3,37 +3,8 @@ var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
 var jwt = require('json-web-token');
-var moment = require('moment')
+var token = require('../middlewares/token');
 
-/**
-   Encode JWT token
-   user is user object
-   type is refresh or token
-**/
-tokenEncode = function (user,params,cb) {
-    currDate=new Date();
-    expDate=new Date();
-    expDate.setMinutes(currDate.getMinutes()+parseInt(params.expires));
-    var payload = {
-      "iss": params.issuer,
-      "aud": params.audience,
-      "exp": moment(expDate).unix(),
-      "iat": moment(currDate).unix(),
-      "sub": user.id,
-      "type": params.type
-    };
-    
-    //console.log(payload); 
-    var secret = params.secret;
-
-    jwt.encode(secret, payload, function (err, token) {
-      if (err) {
-        cb(err);
-      } else {
-        cb(null,token);
-      }
-    });
-};
 
 /**
   Login
@@ -81,8 +52,8 @@ exports.login = function(req, res,next) {
     params.audience=process.env.REFRESH_TOKEN_AUDIENCE;
     params.secret=process.env.REFRESH_TOKEN_SECRET;
     params.type='refresh';
-      
-    tokenEncode(user, params, function (err,token) {
+
+      token.tokenEncode(user, params, function (err,token) {
       if (err) {
          return next(err);
       }
