@@ -1,0 +1,7 @@
+{
+  "parameters" : [
+    {"name" : "a test param",
+     "value" : "a test value"
+    }
+  ]
+}

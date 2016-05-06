@@ -77,7 +77,7 @@ exports.login = function(req, res,next) {
     
     var params={};
     params.expires=process.env.REFRESH_TOKEN_EXPIRES_MINS;
-    params.issuer=process.env.REFRESH_TOKEN_ISSUER;
+    params.issuer='client_auth';
     params.audience=process.env.REFRESH_TOKEN_AUDIENCE;
     params.secret=process.env.REFRESH_TOKEN_SECRET;
     params.type='refresh';

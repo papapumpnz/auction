@@ -1,9 +1,10 @@
 /**
  * Module dependencies.
  */
- var dotenv = require('dotenv');
+var dotenv = require('dotenv');
 var mongoose = require('mongoose');
 var User = require('../models/User');
+var config = require('config');
 
 
 /**
@@ -16,7 +17,7 @@ var adminFile = require('./admin_accounts.json');
 /**
  * Connect to MongoDB.
  */
-mongoose.connect(process.env.MONGODB || process.env.MONGOLAB_URI);
+mongoose.connect(config.database.mongodb || config.database.mongodb_uri);
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);

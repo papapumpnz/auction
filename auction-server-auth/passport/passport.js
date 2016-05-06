@@ -7,8 +7,6 @@ var TwitterStrategy = require('passport-twitter').Strategy;
 var OpenIDStrategy = require('passport-openid').Strategy;
 var OAuthStrategy = require('passport-oauth').OAuthStrategy;
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
-var JwtStrategy = require('passport-jwt').Strategy,
-    ExtractJwt = require('passport-jwt').ExtractJwt;
 
 var User = require('../models/User');
 
@@ -23,32 +21,6 @@ passport.deserializeUser(function(id, done) {
 });
 
 
-/**
- * Validate refresh token
-    https://www.npmjs.com/package/passport-jwt
- */
-
-var opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
-opts.secretOrKey = process.env.TOKEN_SECRET;
-passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    console.log(jwt_payload);
-    User.findOne({_id: jwt_payload.sub}, function(err, user) {
-        if (err) {
-            return done(err, false);
-        }
-        if (user) {
-            if (user.accountActive && user.refreshToken) {
-              done(null, user);
-            } else {
-              done(null, false, { status: 423, message: 'Locked'});
-            }
-        } else {
-            done(null, false, { status: 403, message: 'Unauthorized'});
-            // or you could create a new account 
-        }
-    });
-}));
 
 /**
  * Sign in using Email and Password.

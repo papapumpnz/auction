@@ -1,0 +1,6 @@
+{
+  "database" : {
+    "mongodb": "mongodb://localhost:27017/test",
+    "mongolab_uri": "mongodb://localhost:27017/test"
+  }
+}
