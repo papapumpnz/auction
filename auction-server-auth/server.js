@@ -18,6 +18,7 @@ var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
 var ipfilter = require('express-ipfilter');
 var config = require('config');
+var getDbConfig = require('./config/config_load');
 var jwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
 
 /**
@@ -25,6 +26,7 @@ var jwt = require('express-jwt');                       // https://www.npmjs.com
  https://github.com/lorenwest/node-config/wiki/Configuration-Files
  **/
 if (!config.database){
+    console.log('Error loading file based configuration.');
     process.exit(1);
 }
 
@@ -45,7 +47,7 @@ var store = new MongoStore(function (ready) {
  * Default path: .env (You can remove the path argument entirely, after renaming `.env.example` to `.env`)
  */
 dotenv.load({ path: './config/.env.example' });
-privateAPIWhiteList=_.toArray(process.env.PRIVATE_API_WHITELIST.slice());
+
 /**
  * API keys and Passport configuration.
  */
@@ -71,15 +73,34 @@ mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
+
 /**
- * Load our database config parameters and start the server
+ * Load our database config parameters on a regular interval
  */
-mongoose.connection.on('connected', function () {
-    require('./config/config_load').load(function (err,dbConfig) {
-        if(err) {
+appName=config.application.name;
+var dbConfig;
+var interval = 1 * 60 * 1000; // 1 minute
+setInterval(function() {
+    getDbConfig.load(appName, function (err,collection) {
+        if (err) {
             console.log('Error loading database configuration. Error was : ' + err);
-            process.exit(1);
         }
+        if (collection.parameters) {
+            dbConfig = collection;
+        }
+    });
+},interval);
+
+/**
+ * Ensure we load our db config before we start our app
+ */
+getDbConfig.load(appName, function (err, collection) {
+    if (err) {
+        console.log('Error loading database configuration. Error was : ' + err);
+        process.exit(1);
+    }
+    if (collection.parameters) {
+        dbConfig = collection;
 
         /**
          * Express configuration.
@@ -91,32 +112,32 @@ mongoose.connection.on('connected', function () {
         app.set('x-powered-by', false);
         app.use(compress());
         app.use(sass({
-          src: path.join(__dirname, 'public'),
-          dest: path.join(__dirname, 'public'),
-          sourceMap: true
+            src: path.join(__dirname, 'public'),
+            dest: path.join(__dirname, 'public'),
+            sourceMap: true
         }));
         app.use(logger('dev'));
         app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(bodyParser.urlencoded({extended: true}));
         app.use(expressValidator());
         app.use(methodOverride());
         app.use(passport.initialize());
 
 
-        app.all('/*', function(req, res, next) {
-          // CORS headers
-          res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
-          res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-          // Set custom headers for CORS
-          res.header('Access-Control-Allow-Headers', 'Content-type,Accept,Authorization');
-          if (req.method == 'OPTIONS') {
-            res.status(200).end();
-          } else {
-            next();
-          }
+        app.all('/*', function (req, res, next) {
+            // CORS headers
+            res.header("Access-Control-Allow-Origin", "*"); // restrict it to the required domain
+            res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+            // Set custom headers for CORS
+            res.header('Access-Control-Allow-Headers', 'Content-type,Accept,Authorization');
+            if (req.method == 'OPTIONS') {
+                res.status(200).end();
+            } else {
+                next();
+            }
         });
 
-        app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+        app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 
         /**
          *
@@ -124,52 +145,54 @@ mongoose.connection.on('connected', function () {
          * https://www.npmjs.com/package/express-brute
          */
         var bruteforce = new ExpressBrute(store, {
-            lifetime : process.env.RATE_LIMIT_LIFETIME_SECS,
-            freeRetries : process.env.RATE_LIMIT_RETRIES
+            lifetime: process.env.RATE_LIMIT_LIFETIME_SECS,
+            freeRetries: process.env.RATE_LIMIT_RETRIES
         });
 
         /**
-             Routes
-        **/
+         Routes
+         **/
 
         /**
-          un-auth routes - PUBLIC routes
-          Have rate limiter enabled
-        **/
-        app.get('/', bruteforce.prevent, unAuthRoute.index);
-        app.get('/health', bruteforce.prevent, unAuthRoute.health);
-        app.post('/api/v1/login', bruteforce.prevent, unAuthRoute.login);
-        app.post('/api/v1/register', bruteforce.prevent, unAuthRoute.register);
+         un-auth routes - PUBLIC routes
+         Have rate limiter enabled
+         Have blacklist filter enabled
+         **/
+        ipFilterBlackList = dbConfig.parameters['api.security.blacklist'];
+        app.get('/', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.index);
+        app.get('/health', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.health);
+        app.post('/api/v1/login', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.login);           // passed account, gets refresh token
+        app.post('/api/v1/register', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.register);
 
         /**
-          un-auth routes - PUBLIC routes
-          Have rate limiter enabled
-          Require token
-        **/
-        app.post('/api/v1/token', bruteforce.prevent, unAuthRoute.token);
+         un-auth routes - PUBLIC routes
+         Have rate limiter enabled
+         Require token
+         **/
+        app.post('/api/v1/token', bruteforce.prevent, unAuthRoute.token);       // passed refresh token, gets auth token
 
         /**
-          auth routes  - PRIVATE routes
-          Have whitelist filter enabled
-          Require token
-        **/
-        //app.use(ipfilter(privateAPIWhiteList, {mode:'allow'}));
-        app.post('/api/v1/validate_token', ipfilter(privateAPIWhiteList, {mode:'allow'}), authRoute.validate);
+         auth routes  - PRIVATE routes
+         Have whitelist filter enabled
+         Require token
+         **/
+        ipFilterWhiteList = dbConfig.parameters['api.security.whitelist'];
+        app.post('/api/v1/validate_token', ipfilter(ipFilterWhiteList.value, {mode: 'allow'}), authRoute.validate);     // passed auth token, returns 200 or 401
 
 
         /**
-          Fall through routes for 404's and 500's
-        **/
-        app.use(function(req, res) {
-          res.status(404);
-          res.json({
-            "status": 404,
-            "message": "route not found"
-          });
+         Fall through routes for 404's and 500's
+         **/
+        app.use(function (req, res) {
+            res.status(404);
+            res.json({
+                "status": 404,
+                "message": "route not found"
+            });
         });
 
         // Middleware error handler for json response
-        function handleError(err,req,res,next){
+        function handleError(err, req, res, next) {
             var output = {
                 error: {
                     name: err.name,
@@ -185,17 +208,20 @@ mongoose.connection.on('connected', function () {
          * Error Handler.
          */
         // error handling middleware last
-        app.use( [handleError] );
+        app.use([handleError]);
 
         /**
          * Start Express server.
          */
-        app.listen(app.get('port'), function() {
-          console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
-          console.log('Node version ' + process.version)
+        app.listen(app.get('port'), function () {
+            console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+            console.log('Node version ' + process.version)
         });
 
         module.exports = app;
         module.exports = dbConfig;
-    });
+    } else {
+        console.log('Failed to load any database configuration. Existing application.');
+        process.exit(1);
+    }
 });

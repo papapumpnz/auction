@@ -1,8 +1,24 @@
 {
   "parameters" : [
-    {"name" : "a test param",
-     "value" : "a test value",
-     "consumer" : "all, or an app name"
+    {"name" : "api.security.whitelist",
+      "value" : ["127.0.0.1","::1"],
+      "consumer" : ["all"],
+      "description" : "api endpoint for private server to server whitelist"
+    },
+    {"name" : "api.security.blacklist",
+      "value" : [],
+      "consumer" : ["all"],
+      "description" : "api endpoint for public to server blacklist"
+    },
+    {"name" : "api.security.ratelimit.requests",
+      "value" : 30,
+      "consumer" : ["all"],
+      "description" : "rate limiter max requests in x seconds defined by api.security.ratelimit.lifetime.secs"
+    },
+    {"name" : "api.security.ratelimit.lifetime.secs",
+      "value" : 60,
+      "consumer" : ["all"],
+      "description" : "rate limiter api.security.ratelimit.requests in x seconds"
     }
   ]
 }

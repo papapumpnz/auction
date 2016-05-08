@@ -26,7 +26,7 @@ passport.deserializeUser(function(id, done) {
  * Sign in using Email and Password.
  */
 passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
-  User.findOne({ email: email.toLowerCase()}).populate('comments').populate('items').exec( function(err, user) {
+  User.findOne({ email: email.toLowerCase()}).exec( function(err, user) {
     if (!user) {
       return done(null, false, { message: 'Email ' + email + ' not found.' });
     }
@@ -39,6 +39,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, passw
     });
   });
 }));
+
 
 /**
  * OAuth Strategy Overview

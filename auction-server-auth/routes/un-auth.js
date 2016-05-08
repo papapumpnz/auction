@@ -5,7 +5,6 @@ var passport = require('passport');
 var jwt = require('json-web-token');
 var token = require('../middlewares/token');
 
-
 /**
   Login
   ------

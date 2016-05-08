@@ -22,6 +22,13 @@ mongoose.connection.on('error', function() {
   process.exit(1);
 });
 
+/**
+ * Drop the existing config database
+ */
+mongoose.connection.collections['configs'].drop( function(err) {
+  console.log('Config collection dropped');
+});
+
 /*
 * Add params
 */
@@ -31,20 +38,16 @@ params.forEach (function (param) {
   
   var parameter = new Config({
     name: param.name,
-    value: param.value
+    value: param.value,
+    consumer : param.consumer,
+    description: param.description
   });
 
-  Config.findOne({ name: parameter.name }, function(err, existingParameter) {
-    if (existingParameter) {
-      // delete the existing parameter
+  parameter.save(function(err) {
+    if (err) {
+      console.log('An error occured ' + err);
     }
-    parameter.save(function(err) {
-      if (err) {
-        console.log('An error occured ' + err);
-      }
-      console.log('Done')
-      return
-    });
+    return
   });
 });
 

@@ -23,6 +23,13 @@ mongoose.connection.on('error', function() {
   process.exit(1);
 });
 
+/**
+ * Drop the existing users database
+ */
+mongoose.connection.collections['users'].drop( function(err) {
+  console.log('Users collection dropped');
+});
+
 /*
 * Add admin accounts
 */
@@ -36,18 +43,11 @@ admins.forEach (function (admin) {
     isAdmin : 'true'
   });
 
-  User.findOne({ email: user.email }, function(err, existingUser) {
-    if (existingUser) {
-      console.log('Admin account ' + admin.email + ' already exists');
-      return
+  user.save(function(err) {
+    if (err) {
+      console.log('An error occured ' + err);
     }
-    user.save(function(err) {
-      if (err) {
-        console.log('An error occured ' + err);
-      }
-      console.log('Done')
-      return
-    });
+    return
   });
 });
 
