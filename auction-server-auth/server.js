@@ -14,9 +14,9 @@ var passport = require('passport');
 var expressValidator = require('express-validator');
 var sass = require('node-sass-middleware');
 var ExpressBrute = require('express-brute');
-var MongoStore = require('express-brute-mongo');
+var MongoStore = require('express-brute-mongo');        // https://www.npmjs.com/package/express-brute
 var MongoClient = require('mongodb').MongoClient;
-var ipfilter = require('express-ipfilter');
+var ipfilter = require('express-ipfilter');             // https://www.npmjs.com/package/express-ipfilter
 var config = require('config');
 var getDbConfig = require('./config/config_load');
 var jwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
@@ -145,8 +145,8 @@ getDbConfig.load(appName, function (err, collection) {
          * https://www.npmjs.com/package/express-brute
          */
         var bruteforce = new ExpressBrute(store, {
-            lifetime: process.env.RATE_LIMIT_LIFETIME_SECS,
-            freeRetries: process.env.RATE_LIMIT_RETRIES
+            lifetime: dbConfig.parameters['api.security.ratelimit.requests'].value,
+            freeRetries: dbConfig.parameters['api.security.ratelimit.lifetime.secs'].value
         });
 
         /**
@@ -158,11 +158,11 @@ getDbConfig.load(appName, function (err, collection) {
          Have rate limiter enabled
          Have blacklist filter enabled
          **/
-        ipFilterBlackList = dbConfig.parameters['api.security.blacklist'];
-        app.get('/', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.index);
-        app.get('/health', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.health);
-        app.post('/api/v1/login', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.login);           // passed account, gets refresh token
-        app.post('/api/v1/register', ipfilter(ipFilterBlackList.value, {mode: 'allow'}), bruteforce.prevent, unAuthRoute.register);
+        ipFilterBlackList = dbConfig.parameters['api.security.blacklist'].value.split(",");
+        app.get('/', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.index);
+        app.get('/health', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.health);
+        app.post('/api/v1/login', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.login);           // passed account, gets refresh token
+        app.post('/api/v1/register', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.register);
 
         /**
          un-auth routes - PUBLIC routes
@@ -176,8 +176,8 @@ getDbConfig.load(appName, function (err, collection) {
          Have whitelist filter enabled
          Require token
          **/
-        ipFilterWhiteList = dbConfig.parameters['api.security.whitelist'];
-        app.post('/api/v1/validate_token', ipfilter(ipFilterWhiteList.value, {mode: 'allow'}), authRoute.validate);     // passed auth token, returns 200 or 401
+        ipFilterWhiteList = dbConfig.parameters['api.security.whitelist'].value.split(",");
+        app.post('/api/v1/validate_token', ipfilter(ipFilterWhiteList, {mode: 'allow',log:false}), authRoute.validate);     // passed auth token, returns 200 or 401
 
 
         /**
@@ -219,7 +219,9 @@ getDbConfig.load(appName, function (err, collection) {
         });
 
         module.exports = app;
-        module.exports = dbConfig;
+        exports.dbConfig = function() {
+            return dbConfig;
+        }
     } else {
         console.log('Failed to load any database configuration. Existing application.');
         process.exit(1);

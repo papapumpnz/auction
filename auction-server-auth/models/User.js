@@ -10,7 +10,7 @@ var moment = require('moment')
 var dateMask = 'hh:mma DD-MM-YYYY';
 
 var userSchema = new mongoose.Schema({
-  email: { type: String, lowercase: true, unique: true },
+  email: { type: String, lowercase: true, unique: true, index: true },
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,

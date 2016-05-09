@@ -6,6 +6,11 @@ var jwt = require('json-web-token');
 var token = require('../middlewares/token');
 
 /**
+ * Get database configuration from server.js
+ */
+var dbConfig=require('../server').dbConfig;
+
+/**
   Login
   ------
   Accepts email and password
@@ -44,12 +49,10 @@ exports.login = function(req, res,next) {
         "message": "Locked"
       });
     }
-    
     var params={};
-    params.expires=process.env.REFRESH_TOKEN_EXPIRES_MINS;
-    params.issuer='client_auth';
-    params.audience=process.env.REFRESH_TOKEN_AUDIENCE;
-    params.secret=process.env.REFRESH_TOKEN_SECRET;
+    params.expires=dbConfig.parameters['token.refresh.expires'].value;
+    params.issuer=dbConfig.parameters['token.refresh.issuer'].value;
+    params.secret=dbConfig.parameters['token.refresh.secret'].value;
     params.type='refresh';
 
       token.tokenEncode(user, params, function (err,token) {

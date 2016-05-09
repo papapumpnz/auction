@@ -1,18 +1,22 @@
-var jwt = require('json-web-token');
+var _ = require('underscore');
 var moment = require('moment');
+var jwt = require('json-web-token');
+
 
 /**
  Encode JWT token
  user is user object
- type is refresh or token
+ type is refresh or auth
  **/
 exports.tokenEncode = function (user,params,cb) {
     currDate=new Date();
     expDate=new Date();
     expDate.setMinutes(currDate.getMinutes()+parseInt(params.expires));
+    if (!_.contains(['refresh','auth'],params.type)) {                      // check type of token is refresh or auth
+        params.type='refresh';
+    }
     var payload = {
         "iss": params.issuer,
-        "aud": params.audience,
         "exp": moment(expDate).unix(),
         "iat": moment(currDate).unix(),
         "sub": user.id,
@@ -48,7 +52,13 @@ exports.getToken = function fromHeaderOrQuerystring (req) {
 exports.secretCallback = function(req, payload, done){
     var issuer = payload.iss;
 
-    // TODO : get secret
+    if (issuer=='refresh') {
+        tenent = dbConfig.parameters['token.refresh.secret'].value;
+    } else if (issuer=='auth') {
+        tenent = dbConfig.parameters['token.auth.secret'].value;
+    } else {
+        tenent = null;
+    }
     
     data.getTenantByIdentifier(issuer, function(err, tenant){
         if (err) { return done(err); }
