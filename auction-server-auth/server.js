@@ -16,10 +16,10 @@ var sass = require('node-sass-middleware');
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');        // https://www.npmjs.com/package/express-brute
 var MongoClient = require('mongodb').MongoClient;
-var ipfilter = require('express-ipfilter');             // https://www.npmjs.com/package/express-ipfilter
 var config = require('config');
 var getDbConfig = require('./config/config_load');
 var jwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
+var pageHandler = require('./routes/route_handler');
 
 /**
  Check we have database configuration details
@@ -57,13 +57,6 @@ var passportConfig = require('./passport/passport');
  * Create Express server.
  */
 var app = express();
-
-/**
- Load our routes
- **/
-
-var unAuthRoute = require ('./routes/un-auth');
-var authRoute = require ('./routes/auth');
 
 /**
  * Connect to MongoDB.
@@ -150,34 +143,10 @@ getDbConfig.load(appName, function (err, collection) {
         });
 
         /**
-         Routes
-         **/
-
-        /**
-         un-auth routes - PUBLIC routes
-         Have rate limiter enabled
-         Have blacklist filter enabled
-         **/
-        ipFilterBlackList = dbConfig.parameters['api.security.blacklist'].value.split(",");
-        app.get('/', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.index);
-        app.get('/health', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.health);
-        app.post('/api/v1/login', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.login);           // passed account, gets refresh token
-        app.post('/api/v1/register', ipfilter(ipFilterBlackList, {log:false}), bruteforce.prevent, unAuthRoute.register);
-
-        /**
-         un-auth routes - PUBLIC routes
-         Have rate limiter enabled
-         Require token
-         **/
-        app.post('/api/v1/token', bruteforce.prevent, unAuthRoute.token);       // passed refresh token, gets auth token
-
-        /**
-         auth routes  - PRIVATE routes
-         Have whitelist filter enabled
-         Require token
-         **/
-        ipFilterWhiteList = dbConfig.parameters['api.security.whitelist'].value.split(",");
-        app.post('/api/v1/validate_token', ipfilter(ipFilterWhiteList, {mode: 'allow',log:false}), authRoute.validate);     // passed auth token, returns 200 or 401
+         * Get our routes, pass objects
+         */
+        var ph = new pageHandler();
+        ph.routes(app,dbConfig,bruteforce);
 
 
         /**
@@ -219,9 +188,7 @@ getDbConfig.load(appName, function (err, collection) {
         });
 
         module.exports = app;
-        exports.dbConfig = function() {
-            return dbConfig;
-        }
+
     } else {
         console.log('Failed to load any database configuration. Existing application.');
         process.exit(1);

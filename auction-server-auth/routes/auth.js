@@ -4,9 +4,15 @@ var async = require('async');
 var passport = require('passport');
 var jwt = require('json-web-token');
 
-/**
-   Validates a token
-**/
-exports.validate = function(req, res,next) {
-  res.json({"status" : 200, "message" : "ok"});
+module.exports = function (dbConfig) {
+
+  return {
+
+    /**
+     Validates a token
+     **/
+    validate: function (req, res, next) {
+      res.json({"status": 200, "message": "ok"});
+    }
+  }
 };
