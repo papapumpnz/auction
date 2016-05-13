@@ -2,8 +2,6 @@ var _ = require('underscore');
 var express = require('express');
 var compress = require('compression');
 var bodyParser = require('body-parser');
-var dotenv = require('dotenv');
-var path = require('path');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var methodOverride = require('method-override');
@@ -18,7 +16,6 @@ var MongoStore = require('express-brute-mongo');        // https://www.npmjs.com
 var MongoClient = require('mongodb').MongoClient;
 var config = require('config');
 var getDbConfig = require('./config/config_load');
-var jwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
 var pageHandler = require('./routes/route_handler');
 
 /**

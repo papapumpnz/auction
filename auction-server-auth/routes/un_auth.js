@@ -2,10 +2,11 @@ var User = require('../models/User');
 var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
-var token = require('../middlewares/token');
 
 module.exports = function (dbConfig) {
 
+    var token = require('../middlewares/token')(dbConfig);
+    
     return {
 
         /**
@@ -53,19 +54,30 @@ module.exports = function (dbConfig) {
                 params.secret = dbConfig.parameters['token.refresh.secret'].value;
                 params.type = 'refresh';
 
-                token.tokenEncode(user, params, function (err, token) {
-                    if (err) {
-                        return next(err);
+                async.parallel([
+                    function(callback){
+                        token.randomToken(24, function (randomToken) {
+                            params.refreshToken = randomToken;
+                            callback(null);
+                        });
+                    },
+                    function(callback){
+                        token.tokenEncode(user, params, function (err, token) {
+                            if (err) {
+                                callback(err);
+                            }
+                            user.refreshToken = token;
+                            callback(null);
+                        });
                     }
-                    user.refreshToken = token;
+                ], function(err, results) {
                     user.save(function (err) {
                         if (err) {
                             return next(err);
                         }
-                        res.json({"status": 200, "token": token});
+                        res.json({"status": 200, "token": user.refreshToken});
                     });
                 });
-
             })(req, res, next);
         },
 
@@ -81,7 +93,7 @@ module.exports = function (dbConfig) {
             params.expires = dbConfig.parameters['token.refresh.expires'].value;
             params.issuer = dbConfig.parameters['token.refresh.issuer'].value;
             params.secret = dbConfig.parameters['token.refresh.secret'].value;
-            params.type = 'token';
+            params.type = 'auth';
 
             tokenEncode(user, function (err, token) {
                 if (err) {
