@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
 
-module.exports = function (dbConfig) {
+module.exports = function (dbConfig,stats) {
 
     var token = require('../middlewares/token')(dbConfig);
     
@@ -80,6 +80,7 @@ module.exports = function (dbConfig) {
                             if (err) {
                                 return next(err);
                             }
+                            stats.increment('totalLogins');             // stats
                             res.json({"status": 200, "token": params.token});
                         });
                     } else {
@@ -109,10 +110,12 @@ module.exports = function (dbConfig) {
          Shows various stats about the server
          **/
         health: function (req, res, next) {
-            res.status(200);
-            res.json({
-                "status": 200,
-                "message": 'nothing here yet for health'
+            stats.getStats(function(metrics) {
+                res.status(200);
+                res.json({
+                    "status": 200,
+                    "stats": metrics
+                });
             });
         },
 

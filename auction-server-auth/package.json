@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha --reporter spec --timeout 5000"
+    "test": "mocha --reporter spec --timeout 30s"
   },
   "engines" : {
     "node" : ">= 4.0.0"
@@ -61,6 +61,7 @@
     "passport-twitter": "^1.0.4",
     "paypal-rest-sdk": "^1.6.8",
     "request": "^2.69.0",
+    "statware" : "1.x.x",
     "stripe": "^4.4.0",
     "tumblr.js": "^0.0.7",
     "twilio": "^3.3.0-edge",

@@ -6,12 +6,12 @@ var routeHandler = module.exports = function routeHandler() {
 
 routeHandler.prototype = {
 
-    routes: function (app, dbConfig, bruteforce) {
+    routes: function (app, dbConfig, bruteforce,stats) {
 
         /**
          Load our route modules, pass dbConfig
          **/
-        var unAuthRoute = require('../routes/un_auth')(dbConfig);
+        var unAuthRoute = require('../routes/un_auth')(dbConfig,stats);
         var authRoute = require('../routes/auth')(dbConfig);
         
         /*
@@ -47,12 +47,12 @@ routeHandler.prototype = {
          Require an API key
          Pass auth token
          **/
-        app.post('/api/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: token.secretCallback, isRevoked: token.isRevokedCallback}),authRoute.token);       // passed refresh token, gets auth token
+        app.post('/api/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: dbConfig.parameters['token.refresh.secret'].value, isRevoked: token.isRevokedCallback}),authRoute.token);       // passed refresh token, gets auth token
 
         app.post('/api/v1/validatetoken', ipfilter(ipFilterWhiteList, {
             mode: 'allow',
             log: false
-        }), expressJwt({secret: token.secretCallback}),
+        }), expressJwt({secret: dbConfig.parameters['token.auth.secret'].value}),
             authRoute.validate);     // passed auth token, returns 200 or 401
     }
 };

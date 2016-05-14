@@ -17,6 +17,7 @@ var MongoClient = require('mongodb').MongoClient;
 var config = require('config');
 var getDbConfig = require('./config/config_load');
 var pageHandler = require('./routes/route_handler');
+var statware = require("statware");                     // https://www.npmjs.com/package/statware
 
 /**
  Check we have database configuration details
@@ -63,6 +64,16 @@ mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
+
+/*
+* Create our stats object
+*/
+var stats = statware();
+if (process.env.NODE_ENV==='development') {
+    stats.installProcessInfo();
+    stats.installSystemInfo();
+}
+
 
 /**
  * Load our database config parameters on a regular interval
@@ -116,6 +127,11 @@ getDbConfig.load(appName, function (err, collection) {
         app.use(methodOverride());
         app.use(passport.initialize());
 
+        app.all('/*', function (req, res, next) {
+            // stats
+            stats.increment("totalRequests");
+            next();
+        });
 
         app.all('/*', function (req, res, next) {
             // CORS headers
@@ -146,7 +162,7 @@ getDbConfig.load(appName, function (err, collection) {
          * Get our routes, pass objects
          */
         var ph = new pageHandler();
-        ph.routes(app,dbConfig,bruteforce);
+        ph.routes(app,dbConfig,bruteforce,stats);
 
 
         /**
@@ -171,7 +187,7 @@ getDbConfig.load(appName, function (err, collection) {
             };
             var statusCode = err.status || 500;
             res.status(statusCode).json(output);
-        };
+        }
 
         /**
          * Error Handler.
@@ -186,11 +202,12 @@ getDbConfig.load(appName, function (err, collection) {
             console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
             console.log('Node version ' + process.version)
         });
-
-        module.exports = app;
+        
 
     } else {
         console.log('Failed to load any database configuration. Existing application.');
         process.exit(1);
     }
 });
+
+module.exports = app;
