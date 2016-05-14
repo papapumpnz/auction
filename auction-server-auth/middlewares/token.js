@@ -10,23 +10,24 @@ module.exports = function (dbConfig) {
 
         /**
          Encode JWT token
-         user is user object
-         type is refresh or auth
+         params as list of params to encode
+         type is refresh, auth, service
          **/
-        tokenEncode: function (user, params, cb) {
+        tokenEncode: function (params, cb) {
             currDate = new Date();
             expDate = new Date();
             expDate.setMinutes(currDate.getMinutes() + parseInt(params.expires));
-            if (!_.contains(['refresh', 'auth'], params.type)) {                      // check type of token is refresh or auth
+            if (!_.contains(['refresh', 'auth','service'], params.type)) {                      // check type of token is refresh, auth or service
                 params.type = 'refresh';
             }
             var payload = {
                 "iss": params.issuer,
                 "exp": moment(expDate).unix(),
                 "iat": moment(currDate).unix(),
-                "sub": user.id,
+                "sub": params.userid,
                 "type": params.type,
-                "jti" : params.refreshToken
+                "rti" : params.refreshToken,
+                "ip" : params.ip
             };
 
             jwt.encode(params.secret, payload, function (err, token) {
@@ -55,6 +56,9 @@ module.exports = function (dbConfig) {
         /*
         * Generates a random token
         */
+
+        // TODO : Make this more secure
+
         randomToken: function(length,cb) {
             var token = "";
             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -80,34 +84,68 @@ module.exports = function (dbConfig) {
          * Returns secret key using issuer from token
          */
         secretCallback: function (req, payload, done) {
-
-            if (payload.type == 'refresh') {
-                secret = dbConfig.parameters['token.refresh.secret'].value;
-            } else if (payload.type == 'auth') {
-                secret = dbConfig.parameters['token.auth.secret'].value;
-            } else {
-                secret = null;
+            secret = null;
+            if (payload) {
+                if (payload.type == 'refresh') {
+                    secret = dbConfig.parameters['token.refresh.secret'].value;
+                } else if (payload.type == 'auth') {
+                    secret = dbConfig.parameters['token.auth.secret'].value;
+                }
+                return done(null, secret);
             }
-
-            return done(null, secret);
+            return done('invalid token', null);
         },
 
+        /*
+        * isRevokedCallback
+        * Checks token payload for a valid:
+        *       sub = users id against db
+        *       rti = users fresh token in db
+        *       ip = users lastIp in db
+        *       also checks the user account is active
+        */
         isRevokedCallback: function (req, payload, done) {
-            var userId = payload.sub;
-            var tokenId = payload.jti;
 
-            User.findOne({_id: userId}).exec(function (err, user) {
-                if (err) {
-                    return done(err);
-                }
-                if (!user || !user.accountActive || tokenId != user.refreshToken) {
-                    // no user, or account suspended, or no refresh token/token not match
-                    return done(null, true)
-                } else {
+            if (payload) {
+                var tokenUserId = payload.sub;
+                var tokenId = payload.rti;
+                var tokenIp = payload.ip;
+                var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+                User.findById(tokenUserId).exec(function (err, user) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    /*
+                    * Begin token validation
+                    */
+
+                    if (dbConfig.parameters['token.refresh.enforce.valid.ip'].value) {
+                        if (tokenIp != ip) {
+                            // ip enforcement on and tokens ip != users.lastIp
+                            return done(null, true);
+                        }
+                    }
+                    if (!user) {
+                        // we dont have a valid user
+                        return done(null, true);
+                    }
+                    if (!user.accountActive) {
+                        // user account is inactive
+                        return done(null, true);
+                    }
+                    if (tokenId != user.refreshToken) {
+                        // users refreshToken != tokens refresh token id
+                        return done(null, true);
+                    }
                     // user ok and token ok
-                    return done(null, false)
-                }
-            });
+                    return done(null, false);
+                });
+            } else {
+                // something went wrong, we dont have a token payload so return 401
+                return done(null, true);
+            }
         }
     };
 };

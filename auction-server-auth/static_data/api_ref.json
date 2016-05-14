@@ -3,8 +3,8 @@
   "description" : "API specifications for auction site authentication and registration API",
   "url_base" : "/api/v1/",
   "spec" : [
-     { "route" : "auth",
-       "description" : "Authenticates account request and returns an access token",
+     { "route" : "login",
+       "description" : "Authenticates account request and returns a long lived refresh token",
        "method" : "POST",
        "headers" : 
        {
@@ -33,6 +33,28 @@
            "url" : "images/api_token_uml.gif"
          }
        ]
-     }
+     },
+    { "route" : "token",
+      "description" : "Validates a refresh token and returns a short lived access token",
+      "method" : "POST",
+      "headers" :
+      {
+        "Authorization" : "Bearer {refresh token}"
+      },
+      "body" :
+      {
+      },
+      "returns" : {
+        "content_type" : "application/json",
+        "body" :
+        {
+          "status" : "HTTP status code",
+          "token" : "An access token if authenticated",
+          "message" : "If an error occured, or request was not authenticated"
+        }
+      },
+      "images" : [
+      ]
+    }
   ]
 }

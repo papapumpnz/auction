@@ -67,6 +67,9 @@ mongoose.connection.on('error', function() {
 /**
  * Load our database config parameters on a regular interval
  */
+
+// TODO : freshed dbConfig object not being passed to required modules. Fix this.
+
 appName=config.application.name;
 var dbConfig;
 var interval = 1 * 60 * 1000; // 1 minute
@@ -168,7 +171,7 @@ getDbConfig.load(appName, function (err, collection) {
             };
             var statusCode = err.status || 500;
             res.status(statusCode).json(output);
-        }
+        };
 
         /**
          * Error Handler.

@@ -53,55 +53,42 @@ module.exports = function (dbConfig) {
                 params.issuer = dbConfig.parameters['token.refresh.issuer'].value;
                 params.secret = dbConfig.parameters['token.refresh.secret'].value;
                 params.type = 'refresh';
+                params.userid = user.id;
+                params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-                async.parallel([
+                async.waterfall([
                     function(callback){
                         token.randomToken(24, function (randomToken) {
-                            params.refreshToken = randomToken;
-                            callback(null);
+                            callback(null,randomToken);
                         });
                     },
-                    function(callback){
-                        token.tokenEncode(user, params, function (err, token) {
+                    function(randomToken,callback){
+                        params.refreshToken = randomToken;
+                        user.refreshToken = randomToken;
+                        token.tokenEncode(params, function (err, token) {
                             if (err) {
-                                callback(err);
+                                callback(err,null);
                             }
-                            user.refreshToken = token;
-                            callback(null);
+                            params.token = token;
+                            callback(null,true);
                         });
                     }
-                ], function(err, results) {
-                    user.save(function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.json({"status": 200, "token": user.refreshToken});
-                    });
+                ], function(err, tokenised) {
+                    if (tokenised) {
+                        user.lastIp=params.ip;
+                        user.save(function (err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.json({"status": 200, "token": params.token});
+                        });
+                    } else {
+                        return next(err);
+                    }
                 });
             })(req, res, next);
         },
-
-        /**
-         Token
-         --------
-         Accepts refresh token
-         Returns a refresh token which is long lived
-         **/
-        token: function (req, res, next) {
-
-            var params = {};
-            params.expires = dbConfig.parameters['token.refresh.expires'].value;
-            params.issuer = dbConfig.parameters['token.refresh.issuer'].value;
-            params.secret = dbConfig.parameters['token.refresh.secret'].value;
-            params.type = 'auth';
-
-            tokenEncode(user, function (err, token) {
-                if (err) {
-                    return next(err);
-                }
-                res.json({"status": 200, "token": token});
-            });
-        },
+        
 
         /**
          Index page

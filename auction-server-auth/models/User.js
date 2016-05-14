@@ -18,6 +18,7 @@ var userSchema = new mongoose.Schema({
   
   refreshToken: String,
   accountActive: {type: Boolean, default: true},
+  lastIp : String,
 
   facebook: String,
   twitter: String,

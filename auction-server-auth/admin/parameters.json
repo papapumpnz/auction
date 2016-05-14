@@ -35,6 +35,11 @@
       "consumer" : ["auth"],
       "description" : "issuer of the refresh token"
     },
+    {"name" : "token.refresh.enforce.valid.ip",
+      "value" : "true",
+      "consumer" : ["auth"],
+      "description" : "check the request headers ip against the ip used to create the users last refresh token. If true and no match then token is invalidated"
+    },
     {"name" : "token.auth.secret",
       "value" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1",
       "consumer" : ["all"],

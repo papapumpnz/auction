@@ -18,11 +18,11 @@ describe('GET /health', function() {
   });
 });
 
-describe('POST /api/v1/auth with valid account', function() {
+describe('POST /api/v1/login with valid account', function() {
   it('should return 200 OK with JSON', function(done) {
     var user={email:'super@super.com',password:'Password1'};
     request(app)
-      .post('/api/v1/auth')
+      .post('/api/v1/login')
       .set('Accept', 'application/json')
       .send(user)
       .expect('Content-Type', /json/)
@@ -34,11 +34,11 @@ describe('POST /api/v1/auth with valid account', function() {
   });
 });
 
-describe('POST /api/v1/auth with invalid account', function() {
+describe('POST /api/v1/login with invalid account', function() {
   it('should return 401 "Unauthorized"', function(done) {
     var user={email:'cats@cats.cats',password:'Password1'};
     request(app)
-      .post('/api/v1/auth')
+      .post('/api/v1/login')
       .set('Accept', 'application/json')
       .send(user)
       .expect('Content-Type', /json/)
@@ -46,10 +46,10 @@ describe('POST /api/v1/auth with invalid account', function() {
   });
 });
 
-describe('POST /api/v1/validate_token with valid token', function() {
+describe('POST /api/v1/token with valid token', function() {
   it('should return 200 OK', function(done) {
     request(app)
-      .post('/api/v1/validate_token')
+      .post('/api/v1/token')
       .set('Accept', 'application/json')
       .set('Authorization' ,'JWT ' + token)
       .expect('Content-Type', /json/)
@@ -57,10 +57,10 @@ describe('POST /api/v1/validate_token with valid token', function() {
   });
 });
 
-describe('POST /api/v1/validate_token with invalid token', function() {
+describe('POST /api/v1/token with invalid token', function() {
   it('should return 401 "Unauthorized"', function(done) {
     request(app)
-      .post('/api/v1/validate_token')
+      .post('/api/v1/token')
       .set('Accept', 'application/json')
       .set('Authorization' ,'JWT 45gfzvklKVElkfdete35343.34fkltYepdewpfsEq')
       .expect('Content-Type', /json/)

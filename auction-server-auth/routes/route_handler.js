@@ -39,15 +39,7 @@ routeHandler.prototype = {
         app.get('/health', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, unAuthRoute.health);
         app.post('/api/v1/login', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, unAuthRoute.login);           // passed account, gets refresh token
         app.post('/api/v1/register', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, unAuthRoute.register);
-
-        /**
-         un-auth routes - PUBLIC routes
-         Have rate limiter enabled
-         Have blacklist filter enabled
-         Require token
-         **/
-        app.post('/api/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: token.secretCallback, isRevoked: token.isRevokedCallback}),unAuthRoute.token);       // passed refresh token, gets auth token
-
+        
 
         /**
          auth routes  - PRIVATE routes
@@ -55,9 +47,12 @@ routeHandler.prototype = {
          Require an API key
          Pass auth token
          **/
-        app.post('/api/v1/validate_token', ipfilter(ipFilterWhiteList, {
+        app.post('/api/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: token.secretCallback, isRevoked: token.isRevokedCallback}),authRoute.token);       // passed refresh token, gets auth token
+
+        app.post('/api/v1/validatetoken', ipfilter(ipFilterWhiteList, {
             mode: 'allow',
             log: false
-        }), authRoute.validate);     // passed auth token, returns 200 or 401
+        }), expressJwt({secret: token.secretCallback}),
+            authRoute.validate);     // passed auth token, returns 200 or 401
     }
 };
