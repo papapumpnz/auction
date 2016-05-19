@@ -18,6 +18,9 @@ var config = require('config');
 var getDbConfig = require('./config/config_load');
 var pageHandler = require('./routes/route_handler');
 var statware = require("statware");                     // https://www.npmjs.com/package/statware
+var winston = require('winston');                       // https://github.com/winstonjs/winston
+var expressWinston = require('express-winston');       // https://github.com/bithavoc/express-winston
+var mongoDbWinston = require('winston-mongodb').MongoDB;    //https://www.npmjs.com/package/winston-mongodb
 
 /**
  Check we have database configuration details
@@ -33,11 +36,10 @@ if (!config.database){
 **/
 var store = new MongoStore(function (ready) {
   MongoClient.connect(config.database.mongodb, function(err, db) {
-    if (err) throw err;
-    ready(db.collection('bruteforce-store'));
-  });
+        if (err) throw err;
+        ready(db.collection('bruteforce-store'));
+    });
 });
-
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -63,6 +65,15 @@ mongoose.connect(config.database.mongodb || config.database.mongodb_uri);
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
+});
+
+/**
+ * Connect to MongoDB for user audit db.
+ */
+var auditDb = mongoose.connect(config.database.mongodb_audit);
+auditDb.connection.on('error', function() {
+    console.log('MongoDB Connection Error to audit database. Please make sure that MongoDB is running, or parameter mongodb_audit is set correctly.');
+    process.exit(1);
 });
 
 /*
@@ -148,6 +159,36 @@ getDbConfig.load(appName, function (err, collection) {
 
         app.use(express.static(path.join(__dirname, 'public'), {maxAge: 31557600000}));
 
+        /*
+        *  Winston expressWinston express logger
+        */
+        app.use(expressWinston.logger({
+            transports: [
+                new winston.transports.Console({
+                    json:false,
+                    colorize: true
+                }),
+                new winston.transports.File({
+                    filename: dbConfig.parameters['log.logfile.http'].value
+                })
+            ],
+            meta: false,
+            msg: "HTTP {{req.method}} {{req.url}} {{req.statusCode}} {{res.responseTime}}",
+            expressFormat:true
+        }));
+
+        /*
+        *  Winston mongoDb user audit logger
+        */
+        var auditLog = new (winston.Logger) ({
+            transports:[
+                new winston.transports.MongoDB({
+                  db: auditDb,
+                  collection: 'audit'
+                })
+            ]
+        });
+
         /**
          *
          * Express brute config
@@ -162,7 +203,7 @@ getDbConfig.load(appName, function (err, collection) {
          * Get our routes, pass objects
          */
         var ph = new pageHandler();
-        ph.routes(app,dbConfig,bruteforce,stats);
+        ph.routes(app,dbConfig,bruteforce,stats,auditLog);
 
 
         /**

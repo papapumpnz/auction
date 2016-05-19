@@ -4,7 +4,7 @@ var jwt = require('json-web-token');            // https://www.npmjs.com/package
 var User = require('../models/User');
 
 
-module.exports = function (dbConfig) {
+module.exports = function (dbConfig,auditLog) {
 
     return {
 

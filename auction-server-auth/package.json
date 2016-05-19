@@ -68,6 +68,9 @@
     "twit": "^2.2.2",
     "underscore" : "1.x.x",
     "validator": "^5.0.0",
+    "winston" : "2.x.x",
+    "express-winston": "1.x.x",
+    "winston-mongodb" : "1.x.x",
     "yui": "^3.18.1"
   },
   "devDependencies": {

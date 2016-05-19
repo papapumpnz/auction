@@ -4,9 +4,9 @@ var async = require('async');
 var passport = require('passport');
 var jwt = require('json-web-token');
 
-module.exports = function (dbConfig) {
+module.exports = function (dbConfig,auditLog) {
 
-  var token = require('../middlewares/token')(dbConfig);
+  var token = require('../middlewares/token')(dbConfig,auditLog);
 
   return {
 

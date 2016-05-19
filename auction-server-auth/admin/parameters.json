@@ -54,6 +54,16 @@
       "value" : "auth",
       "consumer" : ["all"],
       "description" : "issuer of the auth token"
+    },
+    {"name" : "log.logfile.http",
+      "value" : "http.log",
+      "consumer" : ["all"],
+      "description" : "Logfile for HTTP request log"
+    },
+    {"name" : "log.logfile.system",
+      "value" : "system.log",
+      "consumer" : ["all"],
+      "description" : "Logfile for system out log"
     }
   ]
 }

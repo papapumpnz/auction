@@ -3,7 +3,7 @@ var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
 
-module.exports = function (dbConfig,stats) {
+module.exports = function (dbConfig,stats,auditLog) {
 
     var token = require('../middlewares/token')(dbConfig);
     
@@ -22,9 +22,9 @@ module.exports = function (dbConfig,stats) {
 
             var errors = req.validationErrors();
             if (errors) {
-                res.status(401);
+                res.status(400);
                 return res.json({
-                    "status": 401,
+                    "status": 400,
                     "message": errors
                 });
             }
@@ -80,8 +80,9 @@ module.exports = function (dbConfig,stats) {
                             if (err) {
                                 return next(err);
                             }
-                            stats.increment('totalLogins');             // stats
-                            res.json({"status": 200, "token": params.token});
+                            auditLog.info("test");
+                            res.status(200);
+                            return res.json({"status": 200, "token": params.token});
                         });
                     } else {
                         return next(err);
@@ -98,11 +99,19 @@ module.exports = function (dbConfig,stats) {
         index: function (req, res, next) {
             // load json api spec file
             var api_data = require('../static_data/api_ref.json');
+            var conType = req.headers['content-type'] || 'text/html';
 
-            res.render('index', {
-                data: api_data,
-                limiter: {timeframe: process.env.RATE_LIMIT_LIFETIME_SECS, requests: process.env.RATE_LIMIT_RETRIES}
-            });
+            if (conType.indexOf('application/json') == 0){
+                // return JSON
+                res.status(200);
+                return res.json({"status":200, "data" : api_data});
+            } else {
+                // return HTML
+                res.render('index', {
+                    data: api_data,
+                    limiter: {timeframe: process.env.RATE_LIMIT_LIFETIME_SECS, requests: process.env.RATE_LIMIT_RETRIES}
+                });
+            }
         },
 
         /**
@@ -112,7 +121,7 @@ module.exports = function (dbConfig,stats) {
         health: function (req, res, next) {
             stats.getStats(function(metrics) {
                 res.status(200);
-                res.json({
+                return res.json({
                     "status": 200,
                     "stats": metrics
                 });
@@ -124,15 +133,14 @@ module.exports = function (dbConfig,stats) {
          */
         register: function (req, res, next) {
             req.assert('email', 'Email is not valid').isEmail();
-            req.assert('password', 'Password must be at least 4 characters long').len(4);
-            req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+            req.assert('password', 'Password must be at least 6 characters long').len(6);
 
             var errors = req.validationErrors();
 
             if (errors) {
-                res.status(500);
-                res.json({
-                    "status": 500,
+                res.status(400);
+                return res.json({
+                    "status": 400,
                     "message": errors
                 });
             }
@@ -145,7 +153,7 @@ module.exports = function (dbConfig,stats) {
             User.findOne({email: req.body.email}, function (err, existingUser) {
                 if (existingUser) {
                     res.status(400);
-                    res.json({
+                    return res.json({
                         "status": 400,
                         "message": 'Account with that email address already exists.'
                     });
@@ -155,7 +163,7 @@ module.exports = function (dbConfig,stats) {
                         return next(err);
                     }
                     res.status(200);
-                    res.json({
+                    return res.json({
                         "status": 200,
                         "message": 'Account created'
                     });
