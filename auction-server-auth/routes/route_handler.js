@@ -41,6 +41,8 @@ routeHandler.prototype = {
         app.post('/api/auth/v1/register', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, unAuthRoute.register);
         
 
+        //TODO : use api key for server to service communication
+        
         /**
          auth routes  - PRIVATE routes
          Have whitelist filter enabled

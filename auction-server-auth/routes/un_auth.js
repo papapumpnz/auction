@@ -34,6 +34,7 @@ module.exports = function (dbConfig,stats,auditLog) {
                     return next(err);
                 }
                 if (!user) {
+                    auditLog.info("User failed authentication with username and password. Invalid credentials",{id:'',email:req.body.email,ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:220});
                     res.status(401);
                     return res.json({
                         "status": 401,
@@ -42,6 +43,7 @@ module.exports = function (dbConfig,stats,auditLog) {
                 }
 
                 if (!user.accountActive) {
+                    auditLog.info("User %s failed authentication with username and password. Account is locked",user.id,{id:user.id,email:req.body.email,ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:210});
                     res.status(423);
                     return res.json({
                         "status": 423,
@@ -80,7 +82,7 @@ module.exports = function (dbConfig,stats,auditLog) {
                             if (err) {
                                 return next(err);
                             }
-                            auditLog.info("test");
+                            auditLog.info("User %s authenticated with username and password",user.id,{id:user.id,email:req.body.email,ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:200});
                             res.status(200);
                             return res.json({"status": 200, "token": params.token});
                         });
@@ -152,6 +154,7 @@ module.exports = function (dbConfig,stats,auditLog) {
 
             User.findOne({email: req.body.email}, function (err, existingUser) {
                 if (existingUser) {
+                    auditLog.info("User attempted to register a new account, but email already in use to user %s",user.id,{id:'',email:req.body.email,ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:110});
                     res.status(400);
                     return res.json({
                         "status": 400,
@@ -162,6 +165,7 @@ module.exports = function (dbConfig,stats,auditLog) {
                     if (err) {
                         return next(err);
                     }
+                    auditLog.info("User %s registered a new account",user.id,{id:user.id,email:req.body.email,ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:100});
                     res.status(200);
                     return res.json({
                         "status": 200,

@@ -67,15 +67,6 @@ mongoose.connection.on('error', function() {
   process.exit(1);
 });
 
-/**
- * Connect to MongoDB for user audit db.
- */
-var auditDb = mongoose.connect(config.database.mongodb_audit);
-auditDb.connection.on('error', function() {
-    console.log('MongoDB Connection Error to audit database. Please make sure that MongoDB is running, or parameter mongodb_audit is set correctly.');
-    process.exit(1);
-});
-
 /*
 * Create our stats object
 */
@@ -173,7 +164,7 @@ getDbConfig.load(appName, function (err, collection) {
                 })
             ],
             meta: false,
-            msg: "HTTP {{req.method}} {{req.url}} {{req.statusCode}} {{res.responseTime}}",
+            msg: "HTTP {{req.method}} {{req.url}} {{req.statusCode}} {{res.responseTime}}ms",
             expressFormat:true
         }));
 
@@ -183,7 +174,7 @@ getDbConfig.load(appName, function (err, collection) {
         var auditLog = new (winston.Logger) ({
             transports:[
                 new winston.transports.MongoDB({
-                  db: auditDb,
+                  db: config.database.mongodb_audit,
                   collection: 'audit'
                 })
             ]

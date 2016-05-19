@@ -23,21 +23,26 @@ module.exports = function (dbConfig,auditLog) {
       params.issuer = dbConfig.parameters['token.auth.issuer'].value;
       params.secret = dbConfig.parameters['token.auth.secret'].value;
       params.type = 'auth';
+      params.userid = req.user.sub;
       params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       token.tokenEncode(params, function (err, token) {
         if (err) {
           callback(err,null);
         }
-        res.json({"status": 200, "token": token});
+        auditLog.info("User %s authenticated with refresh token",req.user.sub,{id:req.user.sub,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});
+        res.status(200);
+        return res.json({"status": 200, "token": token});
       });
     },
 
     /**
-     Validates a token
+     Validates an access token
      **/
     validate: function (req, res, next) {
-      res.json({"status": 200, "valid": "true"});
+      auditLog.info("User %s authenticated with access token",req.user.sub,{id:req.user.sub,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:310});
+      res.status(200);
+      return res.json({"status": 200, "valid": "true"});
     }
   }
 };

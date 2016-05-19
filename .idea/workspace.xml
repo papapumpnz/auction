@@ -2,16 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4e9823aa-3838-4ab5-ae15-c1a5d39b9a35" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/admin/parameters.json" afterPath="$PROJECT_DIR$/auction-server-auth/admin/parameters.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/config/default.json" afterPath="$PROJECT_DIR$/auction-server-auth/config/default.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/middlewares/token.js" afterPath="$PROJECT_DIR$/auction-server-auth/middlewares/token.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/package.json" afterPath="$PROJECT_DIR$/auction-server-auth/package.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/routes/auth.js" afterPath="$PROJECT_DIR$/auction-server-auth/routes/auth.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/routes/route_handler.js" afterPath="$PROJECT_DIR$/auction-server-auth/routes/route_handler.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/routes/un_auth.js" afterPath="$PROJECT_DIR$/auction-server-auth/routes/un_auth.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/server.js" afterPath="$PROJECT_DIR$/auction-server-auth/server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/auction-server-auth/static_data/api_ref.json" afterPath="$PROJECT_DIR$/auction-server-auth/static_data/api_ref.json" />
     </list>
     <ignored path="auction.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,41 +27,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/auction-server-auth/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1258">
-              <caret line="74" column="59" selection-start-line="74" selection-start-column="59" selection-end-line="74" selection-end-column="59" />
+            <state relative-caret-position="338">
+              <caret line="167" column="30" selection-start-line="167" selection-start-column="30" selection-end-line="167" selection-end-column="30" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/auction-server-auth/package.json">
+      <file leaf-file-name="parameters.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/auction-server-auth/admin/parameters.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="72" column="30" selection-start-line="72" selection-start-column="30" selection-end-line="72" selection-end-column="30" />
+            <state relative-caret-position="221">
+              <caret line="13" column="50" selection-start-line="13" selection-start-column="50" selection-end-line="13" selection-end-column="50" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="route_handler.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="route_handler.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/route_handler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="69" selection-start-line="19" selection-start-column="69" selection-end-line="19" selection-end-column="69" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_ref.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/auction-server-auth/static_data/api_ref.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="45" selection-start-line="17" selection-start-column="45" selection-end-line="17" selection-end-column="45" />
+            <state relative-caret-position="290">
+              <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -86,7 +71,7 @@
         <entry file="file://$PROJECT_DIR$/auction-server-auth/config/default.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="119">
-              <caret line="7" column="54" selection-start-line="7" selection-start-column="54" selection-end-line="7" selection-end-column="54" />
+              <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -95,8 +80,8 @@
       <file leaf-file-name="un_auth.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/un_auth.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="82" column="50" selection-start-line="82" selection-start-column="50" selection-end-line="82" selection-end-column="50" />
+            <state relative-caret-position="528">
+              <caret line="58" column="28" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="90" />
               <folding />
             </state>
           </provider>
@@ -105,8 +90,8 @@
       <file leaf-file-name="auth.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/auth.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="63" selection-start-line="8" selection-start-column="63" selection-end-line="8" selection-end-column="63" />
+            <state relative-caret-position="289">
+              <caret line="32" column="183" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="183" />
               <folding />
             </state>
           </provider>
@@ -115,8 +100,8 @@
       <file leaf-file-name="token.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/auction-server-auth/middlewares/token.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
+            <state relative-caret-position="2380">
+              <caret line="140" column="72" selection-start-line="140" selection-start-column="72" selection-end-line="140" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -168,12 +153,12 @@
         <option value="$PROJECT_DIR$/auction-server-auth/static_data/api_ref.json" />
         <option value="$PROJECT_DIR$/auction-server-auth/admin/parameters.json" />
         <option value="$PROJECT_DIR$/auction-server-auth/package.json" />
-        <option value="$PROJECT_DIR$/auction-server-auth/routes/route_handler.js" />
-        <option value="$PROJECT_DIR$/auction-server-auth/routes/auth.js" />
-        <option value="$PROJECT_DIR$/auction-server-auth/middlewares/token.js" />
-        <option value="$PROJECT_DIR$/auction-server-auth/routes/un_auth.js" />
         <option value="$PROJECT_DIR$/auction-server-auth/config/default.json" />
+        <option value="$PROJECT_DIR$/auction-server-auth/routes/un_auth.js" />
+        <option value="$PROJECT_DIR$/auction-server-auth/routes/auth.js" />
         <option value="$PROJECT_DIR$/auction-server-auth/server.js" />
+        <option value="$PROJECT_DIR$/auction-server-auth/middlewares/token.js" />
+        <option value="$PROJECT_DIR$/auction-server-auth/routes/route_handler.js" />
       </list>
     </option>
   </component>
@@ -503,12 +488,12 @@
       <workItem from="1463184230376" duration="3977000" />
       <workItem from="1463225905173" duration="9173000" />
       <workItem from="1463470696228" duration="2196000" />
-      <workItem from="1463606211324" duration="6551000" />
+      <workItem from="1463606211324" duration="12217000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102778000" />
+    <option name="totallyTimeSpent" value="108444000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -521,7 +506,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18220116" sideWeight="0.4863124" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32864866" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -531,7 +516,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3279396" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18220116" sideWeight="0.5136876" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3171521" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3106796" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -575,7 +560,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="107" />
+      <option name="time" value="111" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="NodeJSConfigurationType">
@@ -587,14 +572,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auction-server-auth/config/config.json" />
     <entry file="file://$PROJECT_DIR$/auction-server-auth/config/.env.example">
       <provider selected="true" editor-type-id="text-editor">
@@ -696,13 +673,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/admin/parameters.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="2" selection-start-line="31" selection-start-column="2" selection-end-line="31" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auction-server-auth/node_modules/express/lib/router/route.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
@@ -767,13 +737,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/models/User.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="8" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auction-server-auth/passport/passport.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
@@ -828,42 +791,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/route_handler.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="69" selection-start-line="19" selection-start-column="69" selection-end-line="19" selection-end-column="69" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/auth.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="63" selection-start-line="8" selection-start-column="63" selection-end-line="8" selection-end-column="63" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/middlewares/token.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="44" selection-start-line="6" selection-start-column="44" selection-end-line="6" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auction-server-auth/node_modules/winston-mongodb/lib/winston-mongodb.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
           <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="122" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/un_auth.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="82" column="50" selection-start-line="82" selection-start-column="50" selection-end-line="82" selection-end-column="50" />
           <folding />
         </state>
       </provider>
@@ -879,15 +810,73 @@
     <entry file="file://$PROJECT_DIR$/auction-server-auth/config/default.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
-          <caret line="7" column="54" selection-start-line="7" selection-start-column="54" selection-end-line="7" selection-end-column="54" />
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="18" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/models/User.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="12" column="7" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/node_modules/express-winston/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4657">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/auction-server-auth/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1258">
-          <caret line="74" column="59" selection-start-line="74" selection-start-column="59" selection-end-line="74" selection-end-column="59" />
+        <state relative-caret-position="338">
+          <caret line="167" column="30" selection-start-line="167" selection-start-column="30" selection-end-line="167" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/un_auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="58" column="28" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/middlewares/token.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2380">
+          <caret line="140" column="72" selection-start-line="140" selection-start-column="72" selection-end-line="140" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="32" column="183" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="183" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/admin/parameters.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="50" selection-start-line="13" selection-start-column="50" selection-end-line="13" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auction-server-auth/routes/route_handler.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
           <folding />
         </state>
       </provider>

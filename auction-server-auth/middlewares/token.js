@@ -124,6 +124,7 @@ module.exports = function (dbConfig,auditLog) {
                     if (dbConfig.parameters['token.refresh.enforce.valid.ip'].value) {
                         if (tokenIp != ip) {
                             // ip enforcement on and tokens ip != users.lastIp
+                            auditLog.info("User %s failed authentication with token. Tokens ip does not match users last ip",tokenUserId,{id:tokenUserId,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});
                             return done(null, true);
                         }
                     }
@@ -133,10 +134,12 @@ module.exports = function (dbConfig,auditLog) {
                     }
                     if (!user.accountActive) {
                         // user account is inactive
+                        auditLog.info("User %s failed authentication with token. User account is inactive",tokenUserId,{id:tokenUserId,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});
                         return done(null, true);
                     }
                     if (tokenId != user.refreshToken) {
                         // users refreshToken != tokens refresh token id
+                        auditLog.info("User %s failed authentication with token. Tokens id does not match users token id",tokenUserId,{id:tokenUserId,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});
                         return done(null, true);
                     }
                     // user ok and token ok
