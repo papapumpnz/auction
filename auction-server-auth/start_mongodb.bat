@@ -11,4 +11,4 @@ mkdir "%working_directory%/%data_directory%"
 GOTO RUNMONGO
 
 :RUNMONGO
-mongod.exe --dbpath "%working_directory%/%data_directory%" --rest
+E:\mongodb\bin\mongod.exe --dbpath "%working_directory%/%data_directory%" --rest

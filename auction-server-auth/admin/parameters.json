@@ -55,6 +55,31 @@
       "consumer" : ["all"],
       "description" : "issuer of the auth token"
     },
+    {"name" : "token.service.secret",
+      "value" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1$1Tv",
+      "consumer" : ["auth"],
+      "description" : "service token secret key. Used for server to server authentication"
+    },
+    {"name" : "token.service.expires",
+      "value" : 0,
+      "consumer" : ["auth"],
+      "description" : "service token lifetime in minutes. 0 never expire"
+    },
+    {"name" : "token.service.issuer",
+      "value" : "auth",
+      "consumer" : ["auth"],
+      "description" : "service of the server token"
+    },
+    {"name" : "token.service.valid.api.keys",
+      "value" : ["_F~.ZAE8~0wLCST2uD*dJs9O`Bq2/$"],
+      "consumer" : ["auth"],
+      "description" : "list of valid api keys trusted by auth"
+    },
+    {"name" : "token.service.auth.api.key",
+      "value" : ["_F~.ZAE8~0wLCST2uD*dJs9O`Bn2/$"],
+      "consumer" : ["auth"],
+      "description" : "api key of the auth server"
+    },
     {"name" : "log.logfile.http",
       "value" : "http.log",
       "consumer" : ["all"],

@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var User = require('../models/User');
 var nodemailer = require('nodemailer');
 var async = require('async');
@@ -92,8 +93,56 @@ module.exports = function (dbConfig,stats,auditLog) {
                 });
             })(req, res, next);
         },
-        
 
+        /**
+         serviceToken
+         ------------
+         Accepts an api key in body param apikey
+         apikey is valided against know api keys in db config param token.service.valid.api.keys
+         If validated, api key is encrypted and stored in token and returned to caller
+         **/
+        serviceToken: function (req, res, next) {
+            apiKey=req.headers['Authorization'] || null;
+
+            if (!apiKey) {
+                res.status(400);
+                return res.json({
+                    "status": 400,
+                    "message": 'No API key passed in Authorization header'
+                });
+            }
+
+            if (_.contains(dbConfig.parameters['token.service.valid.api.keys'].value,apiKey)) {
+
+                params.expires = dbConfig.parameters['token.service.expires'].value;
+                params.issuer = dbConfig.parameters['token.service.issuer'].value;
+                params.secret = dbConfig.parameters['token.service.secret'].value;
+                params.type = 'service';
+                params.userid = apiKey;
+                params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+                token.tokenEncode(params, function (err, token) {
+                    if (err) {
+                        res.status(500);
+                        return res.json({
+                            "status": 500,
+                            "message": err
+                        });
+                    }
+                    res.status(200);
+                    return res.json({"status": 200, "token": token});
+                });
+
+            } else {
+                res.status(401);
+                return res.json({
+                    "status": 401,
+                    "message": "Unauthorized"
+                });
+            }
+
+        },
+        
         /**
          Index page
          Shows api for server

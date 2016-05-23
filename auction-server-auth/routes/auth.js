@@ -40,7 +40,33 @@ module.exports = function (dbConfig,auditLog) {
      Validates an access token
      **/
     validate: function (req, res, next) {
+
+      req.assert('token').notEmpty();
+
+      var errors = req.validationErrors();
+      if (errors) {
+        res.status(400);
+        return res.json({
+          "status": 400,
+          "message": errors
+        });
+      }
+
+      tokenParam = req.body.token;
+
+      token.tokenDecode(tokenParam,dbConfig.parameters['token.auth.secret'].value, function(err,decrypt) {
+        console.log(decrypt) ;
+      });
+
       auditLog.info("User %s authenticated with access token",req.user.sub,{id:req.user.sub,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:310});
+      res.status(200);
+      return res.json({"status": 200, "valid": "true"});
+    },
+
+    /**
+     Validates an service token
+     **/
+    validateService: function (req, res, next) {
       res.status(200);
       return res.json({"status": 200, "valid": "true"});
     }
