@@ -97,12 +97,12 @@ module.exports = function (dbConfig,stats,auditLog) {
         /**
          serviceToken
          ------------
-         Accepts an api key in body param apikey
+         Accepts an X-API-KEY
          apikey is valided against know api keys in db config param token.service.valid.api.keys
          If validated, api key is encrypted and stored in token and returned to caller
          **/
         serviceToken: function (req, res, next) {
-            apiKey=req.headers['Authorization'] || null;
+            apiKey=req.headers['x-api-key'] || null;
 
             if (!apiKey) {
                 res.status(400);
@@ -112,8 +112,10 @@ module.exports = function (dbConfig,stats,auditLog) {
                 });
             }
 
-            if (_.contains(dbConfig.parameters['token.service.valid.api.keys'].value,apiKey)) {
+            validApiKeys = dbConfig.parameters['token.service.valid.api.keys'].value.split(",");
+            if (_.indexOf(validApiKeys,apiKey)!=-1) {
 
+                var params = {};
                 params.expires = dbConfig.parameters['token.service.expires'].value;
                 params.issuer = dbConfig.parameters['token.service.issuer'].value;
                 params.secret = dbConfig.parameters['token.service.secret'].value;

@@ -14,21 +14,21 @@ module.exports = function (dbConfig,auditLog) {
      Token
      --------
      Accepts refresh token
-     Returns a auth token which is short lived
+     Returns an access token which is short lived
      **/
     token: function (req, res, next) {
 
       var params = {};
-      params.expires = dbConfig.parameters['token.auth.expires'].value;
-      params.issuer = dbConfig.parameters['token.auth.issuer'].value;
-      params.secret = dbConfig.parameters['token.auth.secret'].value;
-      params.type = 'auth';
+      params.expires = dbConfig.parameters['token.access.expires'].value;
+      params.issuer = dbConfig.parameters['token.access.issuer'].value;
+      params.secret = dbConfig.parameters['token.access.secret'].value;
+      params.type = 'access';
       params.userid = req.user.sub;
       params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
       token.tokenEncode(params, function (err, token) {
         if (err) {
-          callback(err,null);
+          next(err);
         }
         auditLog.info("User %s authenticated with refresh token",req.user.sub,{id:req.user.sub,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});
         res.status(200);
@@ -52,9 +52,12 @@ module.exports = function (dbConfig,auditLog) {
         });
       }
 
-      tokenParam = req.body.token;
+      tokenValue = req.body.token;
 
-      token.tokenDecode(tokenParam,dbConfig.parameters['token.auth.secret'].value, function(err,decrypt) {
+      token.tokenDecode(tokenValue,dbConfig.parameters['token.access.secret'].value, function(err,decrypt) {
+        if (err) {
+          next(err);
+        }
         console.log(decrypt) ;
       });
 

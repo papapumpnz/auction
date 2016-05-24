@@ -54,7 +54,7 @@ routeHandler.prototype = {
          Have whitelist filter enabled
         *Require Authorization header with value as api key
         */
-         app.post('/api/auth/v1/servicetoken', ipfilter(ipFilterWhiteList, {log: false}),unAuthRoute.serviceToken);       // passed an api key, returns a token for servers
+         app.post('/api/auth/v1/servicetoken', ipfilter(ipFilterWhiteList, {log: false, mode: 'allow'}),unAuthRoute.serviceToken);       // passed an api key, returns a token for servers
 
 
         /**

@@ -11,24 +11,27 @@ module.exports = function (dbConfig,auditLog) {
         /**
          Encode JWT token
          params as list of params to encode
-         type is refresh, auth, service
+         type is refresh, access, service
          **/
         tokenEncode: function (params, cb) {
             currDate = new Date();
             expDate = new Date();
-            expDate.setMinutes(currDate.getMinutes() + parseInt(params.expires));
-            if (!_.contains(['refresh', 'auth','service'], params.type)) {                      // check type of token is refresh, auth or service
+
+            if (!_.contains(['refresh', 'access','service'], params.type)) {                      // check type of token is refresh, auth or service
                 params.type = 'refresh';
             }
             var payload = {
                 "iss": params.issuer,
-                "exp": moment(expDate).unix(),
                 "iat": moment(currDate).unix(),
                 "sub": params.userid,
                 "type": params.type,
                 "rti" : params.refreshToken,
                 "ip" : params.ip
             };
+            if (params.expires!=0) {
+                expDate.setMinutes(currDate.getMinutes() + parseInt(params.expires));
+                payload.exp=moment(expDate).unix();
+            }
 
             jwt.encode(params.secret, payload, function (err, token) {
                 if (err) {
@@ -44,7 +47,7 @@ module.exports = function (dbConfig,auditLog) {
          * 
          */
         tokenDecode: function (token, secret, cb) {
-            jwt.decode(secret, token, function (err_, decode) {
+            jwt.decode(secret, token, function (err, decode) {
                 if (err) {
                     return cb(err);
                 } else {

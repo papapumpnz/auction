@@ -40,20 +40,20 @@
       "consumer" : ["auth"],
       "description" : "check the request headers ip against the ip used to create the users last refresh token. If true and no match then token is invalidated"
     },
-    {"name" : "token.auth.secret",
+    {"name" : "token.access.secret",
       "value" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1",
       "consumer" : ["all"],
-      "description" : "auth token secret key"
+      "description" : "access token secret key"
     },
-    {"name" : "token.auth.expires",
+    {"name" : "token.access.expires",
       "value" : 60,
       "consumer" : ["auth"],
-      "description" : "auth token lifetime in minutes"
+      "description" : "access token lifetime in minutes"
     },
-    {"name" : "token.auth.issuer",
+    {"name" : "token.access.issuer",
       "value" : "auth",
       "consumer" : ["all"],
-      "description" : "issuer of the auth token"
+      "description" : "issuer of the access token"
     },
     {"name" : "token.service.secret",
       "value" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1$1Tv",
@@ -71,7 +71,7 @@
       "description" : "service of the server token"
     },
     {"name" : "token.service.valid.api.keys",
-      "value" : ["_F~.ZAE8~0wLCST2uD*dJs9O`Bq2/$"],
+      "value" : ["_F~.ZAE8~0wLCST2uD*dJs9O`Bn2/$"],
       "consumer" : ["auth"],
       "description" : "list of valid api keys trusted by auth"
     },
