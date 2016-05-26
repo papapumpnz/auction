@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var express = require('express');
+var forceSSL = require('express-force-ssl');                // https://www.npmjs.com/package/express-force-ssl
 var compress = require('compression');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
@@ -14,13 +15,16 @@ var sass = require('node-sass-middleware');
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');        // https://www.npmjs.com/package/express-brute
 var MongoClient = require('mongodb').MongoClient;
-var config = require('config');
-var getDbConfig = require('./config/config_load');
+var config = require('config');                         // default json file config loader (gets the database connection string)
+var getDbConfig = require('./config/config_load');      // config database loader
 var pageHandler = require('./routes/route_handler');
 var statware = require("statware");                     // https://www.npmjs.com/package/statware
 var winston = require('winston');                       // https://github.com/winstonjs/winston
 var expressWinston = require('express-winston');       // https://github.com/bithavoc/express-winston
 var mongoDbWinston = require('winston-mongodb').MongoDB;    //https://www.npmjs.com/package/winston-mongodb
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
 
 /**
  Check we have database configuration details
@@ -35,7 +39,7 @@ if (!config.database){
   MongooseDb store for Brute
 **/
 var store = new MongoStore(function (ready) {
-  MongoClient.connect(config.database.mongodb, function(err, db) {
+  MongoClient.connect(config.database.mongodb_auth, function(err, db) {
         if (err) throw err;
         ready(db.collection('bruteforce-store'));
     });
@@ -61,11 +65,12 @@ var app = express();
 /**
  * Connect to MongoDB.
  */
-mongoose.connect(config.database.mongodb || config.database.mongodb_uri);
+mongoose.connect(config.database.mongodb_auth);
 mongoose.connection.on('error', function() {
-  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  console.log('MongoDB Connection Error to auth database. Please make sure that MongoDB is running.');
   process.exit(1);
 });
+
 
 /*
 * Create our stats object
@@ -112,7 +117,8 @@ getDbConfig.load(appName, function (err, collection) {
          * Express configuration.
          */
 
-        app.set('port', process.env.PORT || 3000);
+        app.set('port', process.env.PORT || 80);
+        app.set('ssl_port', process.env.SSL_PORT || 443);
         app.set('views', path.join(__dirname, 'views'));
         app.set('view engine', 'jade');
         app.set('x-powered-by', false);
@@ -128,7 +134,7 @@ getDbConfig.load(appName, function (err, collection) {
         app.use(expressValidator());
         app.use(methodOverride());
         app.use(passport.initialize());
-
+        app.use(forceSSL);
         app.all('/*', function (req, res, next) {
             // stats
             stats.increment("totalRequests");
@@ -230,11 +236,25 @@ getDbConfig.load(appName, function (err, collection) {
         /**
          * Start Express server.
          */
-        app.listen(app.get('port'), function () {
-            console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
-            console.log('Node version ' + process.version)
+
+        var ssl_options = {
+            key: fs.readFileSync(config.ssl.private_key),
+            cert: fs.readFileSync(config.ssl.cert)
+            //ca: fs.readFileSync(config.ssl.ca)
+        };
+
+        var server = http.createServer(app);
+        var secureServer = https.createServer(ssl_options, app);
+
+        secureServer.listen(app.get('ssl_port'), function () {
+            console.log('Express secure server listening on port %d in %s mode', app.get('ssl_port'), app.get('env'));
+
         });
-        
+        server.listen(app.get('port'), function () {
+            console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+
+        });
+        console.log('Node version ' + process.version)
 
     } else {
         console.log('Failed to load any database configuration. Existing application.');

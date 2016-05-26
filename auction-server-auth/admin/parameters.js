@@ -16,9 +16,9 @@ var parametersFile = require('./parameters.json');
 /**
  * Connect to MongoDB.
  */
-mongoose.connect(config.database.mongodb || config.database.mongodb_uri);
+mongoose.connect(config.database.mongodb_config);
 mongoose.connection.on('error', function() {
-  console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+  console.log('MongoDB Connection Error to config database. Please make sure that MongoDB is running.');
   process.exit(1);
 });
 

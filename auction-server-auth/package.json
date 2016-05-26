@@ -25,6 +25,7 @@
     "express-flash": "^0.0.2",
     "express-brute" : "0.5.x",
     "express-brute-mongo" : "0.1.x",
+    "express-force-ssl" : "0.x",
     "express-ipfilter" : "0.0.x",
     "express-jwt" : "3.3.x",
     "express-session": "^1.13.0",

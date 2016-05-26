@@ -1,7 +1,28 @@
-var config = require('../models/Config') ;
 var async = require('async');
+var mongoose = require('mongoose');
+var config = require('config');
+
+// http://www.zertz.ca/handling-multiple-databases-and-connections-with-mongoose/
+
+/**
+ * Connect to MongoDB.
+ */
+mongoConfig = mongoose.createConnection(config.database.mongodb_config);
+mongoConfig.on('error', function() {
+    console.log('MongoDB Connection Error to config database. Please make sure that MongoDB is running.');
+    process.exit(1);
+});
+
+var configSchema = new mongoose.Schema({
+    name: { type: String, lowercase: true, index : {unique: true}, required: true },
+    value : { type : String},
+    consumer: { type : Array, lowercase: true, default : ["all"], index: true},
+    description: { type : String}
+
+}, { timestamps: true});
 
 
+var configDb = mongoConfig.model('Config', configSchema);
 
 /**
  Exports configuration from the database
@@ -18,7 +39,7 @@ module.exports = {
             searchParam.push(applicationName.toLowerCase());
         }
 
-        config.find({consumer: { $in : searchParam}}, function (err, parameters) {
+        configDb.find({consumer: { $in : searchParam}}, function (err, parameters) {
             if (err) {
                 return callback(err);
             }

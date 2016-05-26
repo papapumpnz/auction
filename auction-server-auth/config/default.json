@@ -2,9 +2,14 @@
   "application" : {
     "name" : "auth"
   },
+  "ssl" : {
+    "private_key" : "private/ssl/server.key",
+    "cert" : "private/ssl/server.crt",
+    "ca" : ""
+  },
   "database" : {
-    "mongodb": "mongodb://localhost:27017/auth",
-    "mongolab_uri": "mongodb://localhost:27017/auth",
+    "mongodb_auth": "mongodb://localhost:27017/auth",
+    "mongodb_config": "mongodb://localhost:27017/config",
     "mongodb_audit": "mongodb://localhost:27017/audit"
   }
 }
