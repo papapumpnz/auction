@@ -1,13 +1,38 @@
 var expressJwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
 var ipfilter = require('express-ipfilter');             // https://www.npmjs.com/package/express-ipfilter
+var getDbConfig = require('../config/config_load');      // config database loader
+
+var dbConfig;
+
+// TODO : freshed dbConfig object not being passed to required modules. Fix this.
+    
 
 var routeHandler = module.exports = function routeHandler() {
 };
 
 routeHandler.prototype = {
 
-    routes: function (app, dbConfig, bruteforce,stats,auditLog) {
+    /*
+    *  Load db config on an interval
+    */
+    init: function (appName, refreshInterval) {
+        var interval = refreshInterval * 60 * 1000;
 
+        (function loadDb() {
+            getDbConfig.load(appName, function (err, collection) {
+                if (err) {
+                    console.log('Error loading database configuration. Error was : ' + err);
+                }
+                if (collection.parameters) {
+                    dbConfig = collection;
+                }
+            });
+            setTimeout(loadDb,interval);
+        })();
+    },
+
+    routes: function (app,bruteforce,stats,auditLog) {
+        //dbConfig=this.dbConfig;
         /**
          Load our route modules, pass dbConfig
          **/

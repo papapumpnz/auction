@@ -83,28 +83,9 @@ if (process.env.NODE_ENV==='development') {
 
 
 /**
- * Load our database config parameters on a regular interval
- */
-
-// TODO : freshed dbConfig object not being passed to required modules. Fix this.
-
-appName=config.application.name;
-var dbConfig;
-var interval = 1 * 60 * 1000; // 1 minute
-setInterval(function() {
-    getDbConfig.load(appName, function (err,collection) {
-        if (err) {
-            console.log('Error loading database configuration. Error was : ' + err);
-        }
-        if (collection.parameters) {
-            dbConfig = collection;
-        }
-    });
-},interval);
-
-/**
  * Ensure we load our db config before we start our app
  */
+appName=config.application.name;
 getDbConfig.load(appName, function (err, collection) {
     if (err) {
         console.log('Error loading database configuration. Error was : ' + err);
@@ -200,7 +181,8 @@ getDbConfig.load(appName, function (err, collection) {
          * Get our routes, pass objects
          */
         var ph = new pageHandler();
-        ph.routes(app,dbConfig,bruteforce,stats,auditLog);
+        ph.init(config.application.name,config.database.refresh_interval_mins);
+        ph.routes(app,bruteforce,stats,auditLog);
 
 
         /**

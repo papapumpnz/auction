@@ -10,6 +10,7 @@
   "database" : {
     "mongodb_auth": "mongodb://localhost:27017/auth",
     "mongodb_config": "mongodb://localhost:27017/config",
-    "mongodb_audit": "mongodb://localhost:27017/audit"
+    "mongodb_audit": "mongodb://localhost:27017/audit",
+    "refresh_interval_mins" : 1
   }
 }

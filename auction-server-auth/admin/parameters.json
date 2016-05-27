@@ -89,6 +89,11 @@
       "value" : "system.log",
       "consumer" : ["all"],
       "description" : "Logfile for system out log"
+    },
+    {"name" : "test param 4",
+      "value" : "test",
+      "consumer" : ["all"],
+      "description" : "a test"
     }
   ]
 }
