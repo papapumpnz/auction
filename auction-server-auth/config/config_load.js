@@ -1,6 +1,15 @@
 var async = require('async');
 var mongoose = require('mongoose');
 var config = require('config');
+var result={};
+
+/*
+*  DEPRECIATED   -- DO NOT USE --
+* 
+* 
+* 
+*/
+
 
 // http://www.zertz.ca/handling-multiple-databases-and-connections-with-mongoose/
 
@@ -31,7 +40,27 @@ var configDb = mongoConfig.model('Config', configSchema);
  **/
 
 module.exports = {
-    load: function(applicationName,callback) {
+
+    /*
+     *  Load db config on an interval
+     */
+    loadOnInterval: function (applicationName, refreshInterval) {
+        var interval = refreshInterval * 60 * 1000;
+
+        (function loadDb() {
+            this.load(appName, function (err, collection) {
+                if (err) {
+                    console.log('Error loading database configuration. Error was : ' + err);
+                }
+                if (collection.parameters) {
+                    this.result = collection;
+                }
+            });
+            setTimeout(loadDb,interval);
+        })();
+    },
+
+    load: function(applicationName) {
         var collection={"parameters":{}};
         collection.lastUpdate=new Date();
         var searchParam=['all'];
@@ -49,8 +78,10 @@ module.exports = {
                 collection.parameters[param.name]={"value":param.value,"consumer":param.consumer,"description":param.description};
                 cb();
             }, function(err) {
-                return callback(null,collection);
+                this.result = collection;
             });
         });
     }
 };
+
+module.exports = exports = this.result;

@@ -3,10 +3,11 @@ var User = require('../models/User');
 var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
+var config = require('config');
 
-module.exports = function (dbConfig,stats,auditLog) {
+module.exports = function (stats,auditLog,logger) {
 
-    var token = require('../middlewares/token')(dbConfig);
+    var token = require('../middlewares/token')(auditLog,logger);
     
     return {
 
@@ -52,9 +53,9 @@ module.exports = function (dbConfig,stats,auditLog) {
                     });
                 }
                 var params = {};
-                params.expires = dbConfig.parameters['token.refresh.expires'].value;
-                params.issuer = dbConfig.parameters['token.refresh.issuer'].value;
-                params.secret = dbConfig.parameters['token.refresh.secret'].value;
+                params.expires = config.tokens.refresh.expires;
+                params.issuer = config.tokens.refresh.issuer;
+                params.secret = config.tokens.refresh.secret;
                 params.type = 'refresh';
                 params.userid = user.id;
                 params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -111,14 +112,13 @@ module.exports = function (dbConfig,stats,auditLog) {
                     "message": 'No API key passed in Authorization header'
                 });
             }
-
-            validApiKeys = dbConfig.parameters['token.service.valid.api.keys'].value.split(",");
-            if (_.indexOf(validApiKeys,apiKey)!=-1) {
+            
+            if (_.indexOf(config.tokens.service.trusted_api_keys,apiKey)!=-1) {
 
                 var params = {};
-                params.expires = dbConfig.parameters['token.service.expires'].value;
-                params.issuer = dbConfig.parameters['token.service.issuer'].value;
-                params.secret = dbConfig.parameters['token.service.secret'].value;
+                params.expires = config.tokens.service.expires;
+                params.issuer = config.tokens.service.issuer;
+                params.secret = config.tokens.service.secret;
                 params.type = 'service';
                 params.userid = apiKey;
                 params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -162,7 +162,7 @@ module.exports = function (dbConfig,stats,auditLog) {
                 // return HTML
                 res.render('index', {
                     data: api_data,
-                    limiter: {timeframe: process.env.RATE_LIMIT_LIFETIME_SECS, requests: process.env.RATE_LIMIT_RETRIES}
+                    limiter: {timeframe: config.security.ratelimit_lifetime_secs, requests: config.security.ratelimit_requests}
                 });
             }
         },

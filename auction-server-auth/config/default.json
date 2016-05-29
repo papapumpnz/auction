@@ -1,6 +1,7 @@
 {
   "application" : {
-    "name" : "auth"
+    "name" : "auth",
+    "api_key" : "_F~.ZAE8~0wLCST2uD*dJs9O`Bn2/$"
   },
   "ssl" : {
     "private_key" : "private/ssl/server.key",
@@ -9,8 +10,37 @@
   },
   "database" : {
     "mongodb_auth": "mongodb://localhost:27017/auth",
-    "mongodb_config": "mongodb://localhost:27017/config",
-    "mongodb_audit": "mongodb://localhost:27017/audit",
-    "refresh_interval_mins" : 1
+    "mongodb_audit": "mongodb://localhost:27017/audit"
+  },
+  "security" : {
+    "whitelist" : ["127.0.0.1","::1"],
+    "blacklist" : [],
+    "ratelimit_requests" : 30,
+    "ratelimit_lifetime_secs" : 60
+  },
+  "tokens" : {
+    "refresh" : {
+      "secret": "S^F2=gqT_$72zT3U*g8Jo3w#VCWQ;J",
+      "expires" : 28800,
+      "issuer" : "auth",
+      "enforce_valid_ip" : "true"
+    },
+    "access" : {
+      "secret" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1",
+      "expires" : 60,
+      "issuer" : "auth"
+    },
+    "service" : {
+      "secret" : "Qu1Ozg#3ajyv3Fxl3bM6U)+28R8H.1$1Tv",
+      "expires" : 0,
+      "issuer" : "auth",
+      "trusted_api_keys" : ["_F~.ZAE8~0wLCST2uD*dJs9O`Bn2/$"]
+    }
+  },
+  "logs" : {
+    "http" : "http.log",
+    "system" : "system.log",
+    "max" : 10,
+    "size" : 5242880
   }
 }

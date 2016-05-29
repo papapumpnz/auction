@@ -1,8 +1,6 @@
 var expressJwt = require('express-jwt');                       // https://www.npmjs.com/package/express-jwt
 var ipfilter = require('express-ipfilter');             // https://www.npmjs.com/package/express-ipfilter
-var getDbConfig = require('../config/config_load');      // config database loader
-
-var dbConfig;
+var config = require('config');
 
 // TODO : freshed dbConfig object not being passed to required modules. Fix this.
     
@@ -11,44 +9,25 @@ var routeHandler = module.exports = function routeHandler() {
 };
 
 routeHandler.prototype = {
-
-    /*
-    *  Load db config on an interval
-    */
-    init: function (appName, refreshInterval) {
-        var interval = refreshInterval * 60 * 1000;
-
-        (function loadDb() {
-            getDbConfig.load(appName, function (err, collection) {
-                if (err) {
-                    console.log('Error loading database configuration. Error was : ' + err);
-                }
-                if (collection.parameters) {
-                    dbConfig = collection;
-                }
-            });
-            setTimeout(loadDb,interval);
-        })();
-    },
-
-    routes: function (app,bruteforce,stats,auditLog) {
+    
+    routes: function (app,bruteforce,stats,auditLog,logger) {
         //dbConfig=this.dbConfig;
         /**
          Load our route modules, pass dbConfig
          **/
-        var unAuthRoute = require('../routes/un_auth')(dbConfig,stats,auditLog);
-        var authRoute = require('../routes/auth')(dbConfig,auditLog);
+        var unAuthRoute = require('../routes/un_auth')(stats,auditLog,logger);
+        var authRoute = require('../routes/auth')(auditLog,logger);
         
         /*
         * Load any modules that need a object passed 
         */
-        var token = require('../middlewares/token')(dbConfig,auditLog);
+        var token = require('../middlewares/token')(auditLog,logger);
 
         /*
         * Ip filters
         */
-        ipFilterBlackList = dbConfig.parameters['api.security.blacklist'].value.split(",");
-        ipFilterWhiteList = dbConfig.parameters['api.security.whitelist'].value.split(",");
+        ipFilterBlackList = config.security.api_security_blacklist;
+        ipFilterWhiteList = config.security.api_security_whitelist;
         
         /**
          Routes
@@ -71,7 +50,7 @@ routeHandler.prototype = {
          Have blacklist filter enabled
          Require refresh token
          **/
-        app.post('/api/auth/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: dbConfig.parameters['token.refresh.secret'].value, isRevoked: token.isRevokedCallback}),authRoute.token);       // passed refresh token, gets auth token
+        app.post('/api/auth/v1/token', ipfilter(ipFilterBlackList, {log: false}), bruteforce.prevent, expressJwt({secret: config.tokens.refresh.secret, isRevoked: token.isRevokedCallback}),authRoute.token);       // passed refresh token, gets auth token
 
 
         /*
@@ -90,13 +69,13 @@ routeHandler.prototype = {
         app.post('/api/auth/v1/validatetoken', ipfilter(ipFilterWhiteList, {
             mode: 'allow',
             log: false
-        }), expressJwt({secret: dbConfig.parameters['token.service.secret'].value}),
+        }), expressJwt({secret: config.tokens.service.secret}),
             authRoute.validate);     // passed auth token in body param, returns 200 or 401
 
         app.post('/api/auth/v1/validateservicetoken', ipfilter(ipFilterWhiteList, {
                 mode: 'allow',
                 log: false
-            }), expressJwt({secret: dbConfig.parameters['token.service.secret'].value}),
+            }), expressJwt({secret: config.tokens.service.secret}),
             authRoute.validateService);     // passed service token, returns 200 or 401
     }
 };

@@ -2,9 +2,9 @@ var _ = require('underscore');
 var moment = require('moment');
 var jwt = require('json-web-token');            // https://www.npmjs.com/package/json-web-token
 var User = require('../models/User');
+var config = require('config');
 
-
-module.exports = function (dbConfig,auditLog) {
+module.exports = function (auditLog,logger) {
 
     return {
 
@@ -90,9 +90,9 @@ module.exports = function (dbConfig,auditLog) {
             secret = null;
             if (payload) {
                 if (payload.type == 'refresh') {
-                    secret = dbConfig.parameters['token.refresh.secret'].value;
+                    secret = config.tokens.refresh.secret;
                 } else if (payload.type == 'auth') {
-                    secret = dbConfig.parameters['token.auth.secret'].value;
+                    secret = config.tokens.access.secret;
                 }
                 return done(null, secret);
             }
@@ -124,7 +124,7 @@ module.exports = function (dbConfig,auditLog) {
                     * Begin token validation
                     */
 
-                    if (dbConfig.parameters['token.refresh.enforce.valid.ip'].value) {
+                    if (config.tokens.refresh.enforce_valid_ip) {
                         if (tokenIp != ip) {
                             // ip enforcement on and tokens ip != users.lastIp
                             auditLog.info("User %s failed authentication with token. Tokens ip does not match users last ip",tokenUserId,{id:tokenUserId,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:300});

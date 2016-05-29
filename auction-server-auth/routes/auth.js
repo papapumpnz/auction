@@ -3,10 +3,11 @@ var nodemailer = require('nodemailer');
 var async = require('async');
 var passport = require('passport');
 var jwt = require('json-web-token');
+var config = require('config');
 
-module.exports = function (dbConfig,auditLog) {
+module.exports = function (auditLog,logger) {
 
-  var token = require('../middlewares/token')(dbConfig,auditLog);
+  var token = require('../middlewares/token')(auditLog,logger);
 
   return {
 
@@ -19,9 +20,9 @@ module.exports = function (dbConfig,auditLog) {
     token: function (req, res, next) {
 
       var params = {};
-      params.expires = dbConfig.parameters['token.access.expires'].value;
-      params.issuer = dbConfig.parameters['token.access.issuer'].value;
-      params.secret = dbConfig.parameters['token.access.secret'].value;
+      params.expires = config.tokens.access.expires;
+      params.issuer = config.tokens.access.issuer;
+      params.secret = config.tokens.access.secret;
       params.type = 'access';
       params.userid = req.user.sub;
       params.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -54,11 +55,10 @@ module.exports = function (dbConfig,auditLog) {
 
       tokenValue = req.body.token;
 
-      token.tokenDecode(tokenValue,dbConfig.parameters['token.access.secret'].value, function(err,decrypt) {
+      token.tokenDecode(tokenValue,config.tokens.access.secret, function(err,decrypt) {
         if (err) {
           next(err);
         }
-        console.log(decrypt) ;
       });
 
       auditLog.info("User %s authenticated with access token",req.user.sub,{id:req.user.sub,email:'',ip:req.headers['x-forwarded-for'] || req.connection.remoteAddress,msg_id:310});
