@@ -237,7 +237,7 @@ var ssl_options = {
 var server = http.createServer(app);
 var secureServer = https.createServer(ssl_options, app);
 
-logger.info('Server startup');
+logger.info('%s server startup ',config.application.name);
 secureServer.listen(app.get('ssl_port'), function () {
     logger.info('Express secure server listening on port %d in %s mode', app.get('ssl_port'), app.get('env'));
 
