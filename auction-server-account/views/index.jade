@@ -1,0 +1,79 @@
+extends layout
+
+block content
+	body(data-spy='scroll', data-target='#my-nav', data-offset='20')
+		.container
+			.row
+				#my-nav.col-sm-3
+					ul.nav.nav-pills.nav-stacked
+						li
+							a(href='#rate') RATE LIMITER
+						hr
+						for route in data.spec
+							li
+								a(href='##{route.route}') #{route.route.toUpperCase()}
+
+				.col-sm-9
+					table.table
+						tbody
+							section(id='#rate')
+								caption Rate limiting
+									tr 
+										td requests
+										td #{limiter.requests} in #{limiter.timeframe} seconds
+					table.table
+						tbody
+							for route in data.spec
+								section(id='##{route.route}')
+									caption #{route.route}
+										tr.active
+											th Request
+											th
+										tr
+											td description
+											td #{route.description}
+										tr
+											td url
+											td #{data.url_base}#{route.route}
+										tr
+											td HTTP method
+											td #{route.method}
+										tr
+											if route.headers
+												td request headers
+												td
+													each val, key in route.headers
+														p=key + ' : ' + val
+										tr
+											if route.body
+												td body params
+												td
+													each val, key in route.body
+														p=key + ' : ' + val
+										tr.active
+											th Response
+											th 
+										tr
+											td content type
+											td #{route.returns.content_type}
+										tr
+											if route.returns.body
+												td body params
+												td
+													each val, key in route.returns.body
+														p=key + ' : ' + val
+										if route.images
+											tr.active
+												th Images
+												th
+												each image in route.images
+													tr
+														td #{image.title}
+														td
+															img.img-responsive(src="#{image.url}")
+															p.small #{image.description}
+
+
+
+script.
+	$('body').scrollspy({ target: '#my-nav' })

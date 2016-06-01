@@ -1,0 +1,30 @@
+{
+  "application" : {
+    "name" : "account",
+    "api_key" : "N4F@=Q816?|c|yM|=h9LTyU?Y%2L[F"
+  },
+  "ssl" : {
+    "private_key" : "private/ssl/server.key",
+    "cert" : "private/ssl/server.crt",
+    "ca" : ""
+  },
+  "database" : {
+    "mongodb_account": "mongodb://localhost:27017/account",
+    "mongodb_audit": "mongodb://localhost:27017/audit"
+  },
+  "security" : {
+    "whitelist" : ["127.0.0.1","::1"],
+    "blacklist" : [],
+    "ratelimit_requests" : 30,
+    "ratelimit_lifetime_secs" : 60
+  },
+  "logs" : {
+    "http" : "http.log",
+    "system" : "system.log",
+    "max" : 10,
+    "size" : 5242880
+  },
+  "api_endpoints" : {
+    "service_token" :"https://localhost/api/auth/v1/servicetoken"
+  }
+}

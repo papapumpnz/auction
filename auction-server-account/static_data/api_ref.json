@@ -1,0 +1,104 @@
+{
+  "api_version" : "v1",
+  "description" : "API specifications for auction site authentication and registration API",
+  "url_base" : "/api/auth/v1/",
+  "spec" : [
+     { "route" : "login",
+       "description" : "Authenticates account request and returns a long lived refresh token",
+       "method" : "POST",
+       "headers" : 
+       {
+       },
+       "body" : 
+       {
+         "email" : "users account login",
+         "password" : "users account password"
+       },
+       "returns" : {
+         "content_type" : "application/json",
+         "body" :
+         {
+           "status" : "HTTP status code",
+           "token" : "An access token if authenticated",
+           "message" : "If an error occured, or request was not authenticated"
+         }
+       },
+       "images" : [
+         {"title" : "Token",
+           "description" : "This image shows the token model for login which returns a long lived refresh token. Refresh token is then used to obtain a short lived auth token to access proteced resources.",
+           "url" : "images/api_proteced_resouce.gif"
+         },
+         {"title" : "Authentication",
+           "description" : "Token exchange is described in this image.",
+           "url" : "images/api_token_uml.gif"
+         }
+       ]
+     },
+    { "route" : "register",
+      "description" : "Validates a refresh token and returns a short lived access token",
+      "method" : "POST",
+      "headers" :
+      {
+        "content_type" : "application/x-www-form-urlencoded"
+      },
+      "body" :
+      {
+        "email" : "Email address to register. In format XX@XX.XX",
+        "password" : "A password. Must be at least 6 characters long. It is expected clients confirm password before submission"
+      },
+      "returns" : {
+        "content_type" : "application/json",
+        "body" :
+        {
+          "status" : "HTTP status code",
+          "message" : "If an error occured, or request was not authenticated"
+        }
+      },
+      "images" : [
+      ]
+    },
+    { "route" : "token",
+      "description" : "Validates a refresh token and returns a short lived access token",
+      "method" : "POST",
+      "headers" :
+      {
+        "Authorization" : "Bearer {refresh token}"
+      },
+      "body" :
+      {
+      },
+      "returns" : {
+        "content_type" : "application/json",
+        "body" :
+        {
+          "status" : "HTTP status code",
+          "token" : "An access token if authenticated",
+          "message" : "If an error occured, or request was not authenticated"
+        }
+      },
+      "images" : [
+      ]
+    },
+    { "route" : "validatetoken",
+      "description" : "Validates an access token",
+      "method" : "POST",
+      "headers" :
+      {
+        "Authorization" : "Bearer {access token}"
+      },
+      "body" :
+      {
+      },
+      "returns" : {
+        "content_type" : "application/json",
+        "body" :
+        {
+          "status" : "HTTP status code",
+          "message" : "Either returns true if authenticated, or an error message"
+        }
+      },
+      "images" : [
+      ]
+    }
+  ]
+}
